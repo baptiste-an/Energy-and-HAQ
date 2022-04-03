@@ -42,7 +42,7 @@ plt_rcParams()
 
 # mcolors.to_rgba('darkblue')
 
-XR = pd.read_excel("exchange rates.xlsx").loc[0]
+XReuros = pd.read_excel("exchange rates.xlsx").loc[0]
 # exchange rate for euro zone, euros/dollars
 pop = pd.read_excel("pop.xlsx", index_col=[0]).drop([2018, 2019], axis=1)
 
@@ -64,14 +64,14 @@ expendituresNHA = (
     .groupby(level="region")
     .sum()
     / 1000
-)  # WHO expenditures in NHA format
+)  # WHO expenditures in NHA format in kUS$
 expendituresOECD_95_99 = pd.read_excel(
     "dépenses santé OCDE.xlsx", header=[0], index_col=[0]
 )
-# OECD expenditures for missing years in WHO
+# OECD expenditures for missing years in WHO in US$
 expendituresNHA = pd.concat([expendituresOECD_95_99, expendituresNHA], axis=1)
 # expenditures in NHA format for WHO and OECD data
-expendituresNHAeuros = expendituresNHA * XR
+expendituresNHAeuros = expendituresNHA * XReuros
 # from current US$ to current euros
 
 shareTW = Yhealth.loc["TW"] / (Yhealth.loc["CN"] + Yhealth.loc["TW"])
@@ -128,6 +128,8 @@ health_shares_OECD.loc["Health and social work services (85)"] = (
     1 - health_shares_OECD.sum()
 )
 
+
+# ATTENTION ! on est en euros
 i = 2015
 pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
 sectors = (
@@ -138,6 +140,30 @@ sectors = (
 
 path = pathexio + "GitHub/exiobase-ISTerre/"
 XReuros = pd.read_excel(path + "data_CPI/exchange rates euro area.xlsx").loc[0]
+index = (  # current$/2017US$ppp
+    pd.read_csv("index_health.txt", index_col=[0, 1])["0"]
+    .unstack()
+    .mul(XReuros.drop([1995, 2018]), axis=0)
+)  # => current€/2017US$ppp
+
+Y_health_NHA_euros = health_shares_OECD.T.mul(
+    expendituresNHAeuros49extrapolated.stack(), axis=0
+)
+Y_health_NHA_euros = pd.DataFrame(Y_health_NHA_euros, columns=sectors).swaplevel()
+exp_cap_euros = Y_health_NHA_euros.sum(axis=1).drop(2018) / pop.stack()
+
+Y_health_NHA_ppp17 = (
+    Y_health_NHA_euros.sum(axis=1).drop([1995, 2018])
+    / pd.DataFrame(index.stack(), index=Y_health_NHA_euros.drop([1995, 2018]).index)[0]
+)
+Y_health_NHA_ppp_cap = Y_health_NHA_ppp17 / pop.stack().swaplevel().drop([1995])
+
+# l'ecart doit venir du ppp 2017 qui est pas le même selon ICP et NHS, vérifier ça puis c'est bueno
+
+
+##################
+
+
 # euro area XR read from OECD database
 indexCPI2017 = pd.read_excel(
     path + "data_CPI/index CPI 2017, US=1.xlsx",
@@ -158,11 +184,6 @@ indexCPI1996 = pd.read_excel(
     path + "data_CPI/index CPI 1996, US=1.xlsx",
     header=[0],
     index_col=[0],
-)
-index = (
-    pd.read_csv("index_health.txt", index_col=[0, 1])["0"]
-    .unstack()
-    .mul(XReuros.drop([1995, 2018]), axis=0)
 )
 
 
@@ -205,19 +226,6 @@ current["region"] = cc.convert(names=current.index, to="EXIO3")
 current = current.reset_index()
 current = current.set_index("region").groupby(level="region").sum()
 current.columns = [int(i) for i in current.columns]
-
-
-Y_health_NHA = health_shares_OECD.T.mul(
-    expendituresNHAeuros49extrapolated.stack(), axis=0
-)
-Y_health_NHA = pd.DataFrame(Y_health_NHA, columns=sectors).swaplevel()
-exp_cap = Y_health_NHA.sum(axis=1).drop(2018) / pop.stack()
-
-Y_health_NHA_ppp = (
-    Y_health_NHA.sum(axis=1).drop([1995, 2018])
-    / pd.DataFrame(index.stack(), index=Y_health_NHA.drop([1995, 2018]).index)[0]
-)
-Y_health_NHA_ppp_cap = Y_health_NHA_ppp / pop.stack().swaplevel().drop([1995])
 
 
 def LkYhealth():
@@ -327,8 +335,8 @@ satellite_ext = [
     "Domestic Extraction Used - Fossil Fuel: Total",
 ]
 
-SLkYhealth_imp = pd.read_csv("Data/SLkYhealthSLkYhealth_imp.txt", index_col=[0, 1, 2])
-SLkYhealth_sat = pd.read_csv("Data/SLkYhealthSLkYhealth_sat.txt", index_col=[0, 1, 2])
+SLkYhealth_imp = pd.read_csv(pathexio + "SLkYhealth_imp.txt", index_col=[0, 1, 2])
+SLkYhealth_sat = pd.read_csv(pathexio + "SLkYhealth_sat.txt", index_col=[0, 1, 2])
 SLkYhealth_imp.columns = SLkYhealth_imp.columns.astype(int)
 SLkYhealth_sat.columns = SLkYhealth_sat.columns.astype(int)
 
@@ -400,7 +408,7 @@ df_arup = pd.concat(
 )
 plt.scatter(df_arup["arup"], df_arup["calc ges"])
 
-
+# une regression par an pour l'énergie
 for year in [1995, 2000, 2005, 2010, 2016]:
     # [[1995,2000,2005,2010,2016]].stack()
     x = QualityIndex[year]
@@ -420,6 +428,7 @@ for year in [1995, 2000, 2005, 2010, 2016]:
     plt.scatter(x, y)
     print(str(round(regression[2] ** 2, 2)))
 
+# une regression pour les cinq années
 for year in [1]:
     x = QualityIndex[[1995, 2000, 2005, 2010, 2016]].stack()
     y_pri = (
@@ -441,6 +450,8 @@ for year in [1]:
     )
     print(str(round(regression[2] ** 2, 2)))
 
+
+# une régression par an pour les dépenses
 for year in [1995, 2000, 2005, 2010, 2016]:
     # [[1995,2000,2005,2010,2016]].stack()
     x = QualityIndex[year]
@@ -455,6 +466,8 @@ for year in [1995, 2000, 2005, 2010, 2016]:
     plt.scatter(x, y)
     print(str(round(regression[2] ** 2, 2)))
 
+
+# une seul plot énergie, pas en log
 for year in [1]:
     x = QualityIndex[[1995, 2000, 2005, 2010, 2016]].stack()
     y_pri = (
@@ -472,23 +485,25 @@ for year in [1]:
     plt.scatter(x, y, color="darkblue")
 
 
+# aFP fonction des dépenses en santé pour les quatre années de l'ICP
+# ça "fit" uniquement en 2005
 fig, axes = plt.subplots(4, figsize=(3, 10))
 k = 0
 # R2 = 0.05, 0.23, 0.05, 0.02
-for index in [indexCPI1996, indexCPI2005, indexCPI2011, indexCPI2017]:
+for ind in [indexCPI1996, indexCPI2005, indexCPI2011, indexCPI2017]:
     year = [1996, 2005, 2011, 2017][k]
     ax = axes[k]
 
     ppp = (
         Y_health_NHA.sum(axis=1).drop(2018).loc[year]
         / XReuros.loc[year]
-        / index["CPI: 06 - Health"]
+        / ind["CPI: 06 - Health"]
     )
     MJ_pri = satellite["Energy Carrier Net Total"].unstack()[year]
     MJ_loss = satellite["Energy Carrier Net LOSS"].unstack()[year]
     MJ_fin = MJ_pri - MJ_loss
     y = MJ_fin / ppp
-    x = exp_cap.loc[year] / XReuros.loc[year] / index["CPI: 06 - Health"]
+    x = exp_cap.loc[year] / XReuros.loc[year] / ind["CPI: 06 - Health"]
 
     regression = scipy.stats.linregress(x, y)
     ax.scatter(x, y, color="darkblue")
@@ -498,12 +513,13 @@ for index in [indexCPI1996, indexCPI2005, indexCPI2011, indexCPI2017]:
     k += 1
 
 
+# evolution de l'aFP, multiplié par 4 ??!??!
 (
     (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
     .unstack()
     .drop(1995, axis=1)
     .sum()
-    / Y_health_NHA_ppp.swaplevel().sum()
+    / Y_health_NHA_ppp.unstack().sum(axis=1)
 ).plot()
 
 
@@ -522,3 +538,11 @@ for index in [indexCPI1996, indexCPI2005, indexCPI2011, indexCPI2017]:
 ).plot()
 pow(1.484689040614855, 1 / 15)
 # + 48%, + 2.5%/an
+
+
+# ...................VALIDATION....................
+
+# check if NHA ppp is indeed current ppp
+(expendituresNHA * 1000 / current_ppp).drop(list(range(1995, 2000, 1)), axis=1).loc[
+    "US"
+]
