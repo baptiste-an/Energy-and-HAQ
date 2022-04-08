@@ -922,45 +922,57 @@ graph1()
 
 
 def graph2():
-    fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+    fig, axes = plt.subplots(1, figsize=(9, 9))
 
     years = [1995, 2000, 2005, 2010, 2016]
     x = QI_agg
     y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
     y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
-    y1 = (y_pri - y_loss)[years]
-    y2 = (
-        impacts_cap[
-            [
-                "Domestic Extraction Used - Forestry and Timber",
-                "Domestic Extraction Used - Non-metalic Minerals",
-                "Domestic Extraction Used - Iron Ore",
-                "Domestic Extraction Used - Non-ferous metal ores",
-            ]
-        ]
-        .sum(axis=1)
-        .unstack()
-        + satellite_cap["Domestic Extraction Used - Fossil Fuel: Total"].unstack()
-    )[years]
-
-    i = 0
-    for y in [y1, y2]:
-        for reg in y.index:
-            axes[i].plot(x.loc[reg], y.loc[reg], label=reg)
-            axes[i].scatter(
-                x.loc[reg].loc[2016],
-                y.loc[reg].loc[2016],
-                label=reg,
-                s=pop.loc[reg].loc[2016] / 1000,
-            )
-            axes[i].annotate(reg, (x.loc[reg].loc[2016], y.loc[reg].loc[2016]))
-        i += 1
+    y = (y_pri - y_loss)[years]
+    regression = scipy.stats.linregress(x.stack(), np.log(y.stack()))
+    # x_lin = np.linspace(x.stack().min(),x.stack().max(),100)
+    # axes.plot(x_lin,np.exp(x_lin*regression[0]+regression[1]),color='black')
+    # print(str(round(regression[2]**2,2)))
+    for reg in y.index:
+        axes.plot(x.loc[reg], y.loc[reg], label=reg)
+        axes.scatter(
+            x.loc[reg].loc[2016],
+            y.loc[reg].loc[2016],
+            label=reg,
+            s=pop.loc[reg].loc[2016] / 1000,
+        )
+        axes.annotate(reg, (x.loc[reg].loc[2016], y.loc[reg].loc[2016]))
 
 
 graph2()
-# rajouter RoW regions
-# ne traiter que énergie pour pouvoir faire très grand graph
 # faire code couleur
+
+
+def graph3():
+    fig, axes = plt.subplots(1, figsize=(12, 12))
+
+    y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
+    y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
+    y = y_pri - y_loss
+
+    df = pd.concat(
+        [y[2016] for i in range(34, 101, 1)],
+        keys=[i for i in range(34, 101, 1)],
+        axis=1,
+    )
+
+    x = QI_agg[2016]
+    regression = scipy.stats.linregress(x, np.log(y[2016]))
+    for ind in range(34, 101, 1):
+        for reg in QI_agg.index:
+            if df.loc[reg].loc[ind] < ind:
+                if df[ind].loc[reg] < np.exp(regression[0] * ind + regression[1]):
+                    df[ind].loc[reg] = np.exp(regression[0] * ind + regression[1])
+
+    df.mul(pop[2016], axis=0).T.plot.area(stacked="True", ax=axes)
+
+
+graph3()
 
 
 def graph4():
@@ -1136,6 +1148,46 @@ def graph5():  # comparaisons déflation
 
 
 # .....SI
+
+
+def graph2SI():
+    fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+
+    years = [1995, 2000, 2005, 2010, 2016]
+    x = QI_agg
+    y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
+    y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
+    y1 = (y_pri - y_loss)[years]
+    y2 = (
+        impacts_cap[
+            [
+                "Domestic Extraction Used - Forestry and Timber",
+                "Domestic Extraction Used - Non-metalic Minerals",
+                "Domestic Extraction Used - Iron Ore",
+                "Domestic Extraction Used - Non-ferous metal ores",
+            ]
+        ]
+        .sum(axis=1)
+        .unstack()
+        + satellite_cap["Domestic Extraction Used - Fossil Fuel: Total"].unstack()
+    )[years]
+
+    i = 0
+    for y in [y1, y2]:
+        for reg in y.index:
+            axes[i].plot(x.loc[reg], y.loc[reg], label=reg)
+            axes[i].scatter(
+                x.loc[reg].loc[2016],
+                y.loc[reg].loc[2016],
+                label=reg,
+                s=pop.loc[reg].loc[2016] / 1000,
+            )
+            axes[i].annotate(reg, (x.loc[reg].loc[2016], y.loc[reg].loc[2016]))
+        i += 1
+
+
+graph2SI()
+# rajouter RoW regions
 
 
 def graph3SI():
