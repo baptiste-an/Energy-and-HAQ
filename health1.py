@@ -1071,6 +1071,7 @@ def graph1():
         # axes[2,1].set_ylim(top=0.55)
 
         plt.tight_layout()
+        plt.savefig("figures/fig1.pdf", bbox="tight")
 
 
 graph1()
@@ -1080,34 +1081,81 @@ graph1()
 
 
 def graph2():
-    fig, axes = plt.subplots(1, figsize=(9, 9))
+    fig, axes = plt.subplots(1, figsize=(8, 8))
+
+    col = pd.read_excel("colors_fig2.xlsx", index_col=[0])
+    cmap = sns.color_palette("deep", n_colors=6, as_cmap="True")
+    dict_color = dict(
+        zip(col["continent"].unique(), cmap[0 : len(col["continent"].unique())])
+    )
+    col["color"] = col["continent"].replace(dict_color)
+
+    col_line = pd.read_excel("colors_fig2.xlsx", index_col=[0])
+    cmap = sns.color_palette("pastel", n_colors=6, as_cmap="True")
+    dict_color = dict(
+        zip(
+            col_line["continent"].unique(),
+            cmap[0 : len(col_line["continent"].unique())],
+        )
+    )
+    col_line["color"] = col_line["continent"].replace(dict_color)
 
     years = [1995, 2000, 2005, 2010, 2016]
     x = QI_agg
     y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
     y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
     y = (y_pri - y_loss)[years]
-    regression = scipy.stats.linregress(x.stack(), np.log(y.stack()))
-    # x_lin = np.linspace(x.stack().min(),x.stack().max(),100)
-    # axes.plot(x_lin,np.exp(x_lin*regression[0]+regression[1]),color='black')
-    # print(str(round(regression[2]**2,2)))
-    for reg in y.index:
-        axes.plot(x.loc[reg], y.loc[reg], label=reg)
+    regression = scipy.stats.linregress(x[2016], np.log(y[2016]))
+    x_lin = np.linspace(x[2016].min(), x[2016].max(), 100)
+    axes.plot(x_lin, np.exp(x_lin * regression[0] + regression[1]), color="black")
+    print(str(round(regression[2] ** 2, 2)))
+
+    names = pd.read_excel("region names.xlsx", index_col=None)
+    dict_names = dict(zip(names["region"], names["full name"]))
+
+    annotations_fig2 = pd.read_excel("region names.xlsx", index_col=[0])
+
+    for reg in pop[2016].sort_values(ascending=False).index:
+        axes.plot(
+            x.loc[reg],
+            y.loc[reg],
+            label=reg,
+            color=col_line.loc[reg].loc["color"],
+            zorder=1,
+        )
         axes.scatter(
             x.loc[reg].loc[2016],
             y.loc[reg].loc[2016],
             label=reg,
             s=pop.loc[reg].loc[2016] / 1000,
+            color=col.loc[reg].loc["color"],
+            zorder=2
+            # edgecolor='black'
         )
-        axes.annotate(reg, (x.loc[reg].loc[2016], y.loc[reg].loc[2016]))
+        axes.annotate(
+            annotations_fig2.loc[reg].loc["full name"],
+            (
+                x.loc[reg].loc[2016] + annotations_fig2.loc[reg].loc["x axis"],
+                y.loc[reg].loc[2016] + annotations_fig2.loc[reg].loc["y axis"],
+            ),
+        )
+
+    axes.set_xlabel("Healthcare Access and Quality Index")
+    axes.set_ylabel("Energy footprint (TJ)")
+    axes.set_xlim(right=106)
+
+    plt.tight_layout()
+    plt.savefig("figures/fig2.pdf")
 
 
 graph2()
-# faire code couleur
+# légende
 
 
 def graph3():
-    fig, axes = plt.subplots(1, figsize=(12, 12))
+    fig, axes = plt.subplots(1, figsize=(8, 8))
+
+    cmap = sns.color_palette("colorblind", as_cmap="True")
 
     y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
     y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
@@ -1127,7 +1175,47 @@ def graph3():
                 if df[ind].loc[reg] < np.exp(regression[0] * ind + regression[1]):
                     df[ind].loc[reg] = np.exp(regression[0] * ind + regression[1])
 
-    df.mul(pop[2016], axis=0).T.plot.area(stacked="True", ax=axes)
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df_agg = (
+        df.mul(pop[2016], axis=0)
+        .rename(index=dict(continent.index))
+        .groupby(level=0)
+        .sum()
+        / 1000000
+    )
+    df_agg.T.loc[[34, 40, 50, 60, 70, 80, 90, 100]].plot.bar(
+        stacked="True", width=0.5, ax=axes, color=cmap
+    )
+    axes.plot(
+        [-0.25, 7.25],
+        [df_agg[34].sum(), df_agg[34].sum()],
+        color="gray",
+        linestyle="dashed",
+    )
+
+    i = 1
+    for ind in [40, 50, 60, 70, 80, 90, 100]:
+        axes.annotate(
+            "",
+            xy=(i + 0.3, df_agg[34].sum()),
+            xytext=(i + 0.3, df_agg[ind].sum()),
+            arrowprops=dict(arrowstyle="<->", color="black"),
+        )
+        axes.text(
+            x=i - 0.3,
+            y=df_agg[ind].sum() + 0.55,
+            s="+ "
+            + str(round(df_agg[ind].sum() / df_agg[34].sum() * 100 - 100, 2))
+            + " \%",
+        )
+        i += 1
+
+    axes.legend(fontsize=10)
+    axes.set_xlabel("World minimum Healthcare Access and Quality Index")
+    axes.set_ylabel("Energy required (EJ)")
+
+    plt.tight_layout()
+    plt.savefig("figures/fig3.pdf")
 
 
 graph3()
