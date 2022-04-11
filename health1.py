@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 from matplotlib import colors as mcolors
 import math
 import country_converter as coco
+import seaborn as sns
 
 cc = coco.CountryConverter()
 pathexio = "C:/Users/andrieba/Documents/"
@@ -638,7 +639,7 @@ def SLkYhealth():
             header=[0],
             index_col=[0, 1, 2],
         ).unstack()
-        pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
+        pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
 
         S = pd.read_csv(
             pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
@@ -659,6 +660,71 @@ def SLkYhealth():
     SLkYhealth_sat.to_csv("Data/SLkYhealth/SLkYhealth_sat.txt")
 
 
+### new slky
+
+for i in [1]:
+    SLkYhealth_imp = pd.DataFrame()
+    SLkYhealth_sat = pd.DataFrame()
+
+    imports_imp = pd.DataFrame()
+    imports_sat = pd.DataFrame()
+    for i in range(1996, 1997, 1):
+        LkYhealth = pd.read_csv(
+            pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".txt",
+            header=[0],
+            index_col=[0, 1, 2],
+        ).unstack()
+        pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
+
+        S = pd.read_csv(
+            pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
+        )
+        SLkYhealth_i = pd.DataFrame()
+        imports_i = pd.DataFrame()
+        for j in S.index:
+            SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
+
+            imports = (
+                LkYhealth.groupby(level=0, axis=1)
+                .sum()
+                .mul(S.loc[j], axis=0)
+                .groupby(level="region")
+                .sum()
+            )
+            imports.index.names = ["region prod"]
+            imports.columns.names = ["region cons"]
+            imports_i[j] = imports.stack()
+
+        SLkYhealth_imp[i] = SLkYhealth_i.stack()
+        imports_imp[i] = imports_i.stack()
+
+        S = pd.read_csv(
+            pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
+        )
+        SLkYhealth_i = pd.DataFrame()
+        imports_i = pd.DataFrame()
+        for j in S.index:
+            SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
+
+            imports = (
+                LkYhealth.groupby(level=0, axis=1)
+                .sum()
+                .mul(S.loc[j], axis=0)
+                .groupby(level="region")
+                .sum()
+            )
+            imports.index.names = ["region prod"]
+            imports.columns.names = ["region cons"]
+            imports_i[j] = imports.stack()
+
+        SLkYhealth_sat[i] = SLkYhealth_i.stack()
+        imports_sat[i] = imports_i.stack()
+
+    # SLkYhealth_imp.to_csv("Data/SLkYhealth/SLkYhealth_imp.txt")
+    # SLkYhealth_sat.to_csv("Data/SLkYhealth/SLkYhealth_sat.txt")
+
+
+###
 impacts_ext = [
     "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)",
     "Carbon dioxide (CO2) CO2EQ IPCC categories 1 to 4 and 6 to 7 (excl land use, land use change and forestry)",
@@ -717,19 +783,49 @@ satellite_cap = satellite.div(
 impacts_cap = impacts.div(pd.DataFrame(pop.stack(), index=impacts.index)[0], axis=0)
 
 
-QualityIndex = pd.read_excel(
-    pathexio + "GitHub/health/Health Access and Quality Index.xlsx",
-    header=0,
-    index_col=0,
-)
-QualityIndex = (
-    pd.DataFrame(QualityIndex, columns=Y_health_NHA_euros.unstack().index)
-    .T.interpolate(method="linear")
-    .bfill()
-    .T.drop([2017, 2018], axis=1)
-)
-# pd.read_csv('IHME_GBD_2016_HAQ_INDEX_1990_2016_SCALED_CAUSE_VALUES/IHME_GBD_2016_HAQ_INDEX_1990_2016_SCALED_CAUSE_VALUES_Y2018M05D23.csv',header=0,index_col=[3])
+def world_total():
+    pba_sat = pd.DataFrame()
+    for i in range(1995, 2014, 1):
+        pba_sat[i] = pd.read_csv(
+            pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/satellite/D_pba.txt",
+            delimiter="\t",
+            header=[0, 1],
+            index_col=[0],
+        ).sum(axis=1)
 
+    pba_imp = pd.DataFrame()
+    for i in range(1995, 2014, 1):
+        pba_imp[i] = pd.read_csv(
+            pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/impacts/D_pba.txt",
+            delimiter="\t",
+            header=[0, 1],
+            index_col=[0],
+        ).sum(axis=1)
+
+    F_sat = pd.DataFrame()
+    for i in range(1995, 2014, 1):
+        F_sat[i] = pd.read_csv(
+            pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/satellite/F_hh.txt",
+            delimiter="\t",
+            header=[0, 1],
+            index_col=[0],
+        ).sum(axis=1)
+
+    F_imp = pd.DataFrame()
+    for i in range(1995, 2014, 1):
+        F_imp[i] = pd.read_csv(
+            pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/impacts/F_hh.txt",
+            delimiter="\t",
+            header=[0, 1],
+            index_col=[0],
+        ).sum(axis=1)
+    (F_sat + pba_sat).to_csv("results/total_sat.csv")
+    (F_imp + pba_imp).to_csv("results/total_imp.csv")
+
+
+# world_total()
+total_sat = pd.read_csv("results/total_sat.csv", index_col=0).loc[satellite_ext]
+total_imp = pd.read_csv("results/total_imp.csv", index_col=0).loc[impacts_ext]
 
 pichler = pd.read_excel("pichler.xlsx", index_col=0)
 arup = pd.read_excel("arup.xlsx", index_col=0)
@@ -886,7 +982,10 @@ pow(1.830727 / 1.233071, 1 / 15)
 
 
 def graph1():
-    fig, axes = plt.subplots(3, 2, figsize=(6, 10))
+    fig, axes = plt.subplots(3, 2, figsize=(8, 10))
+
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+
     df = pd.concat(
         [
             impacts["Domestic Extraction Used - Non-metalic Minerals"],
@@ -901,6 +1000,20 @@ def graph1():
         keys=["Non-metalice minerals", "Metal ores", "Fossil fuel"],
         axis=1,
     )
+    total = pd.concat(
+        [
+            total_imp.loc["Domestic Extraction Used - Non-metalic Minerals"],
+            total_imp.loc[
+                [
+                    "Domestic Extraction Used - Iron Ore",
+                    "Domestic Extraction Used - Non-ferous metal ores",
+                ]
+            ].sum(),
+            total_sat.loc["Domestic Extraction Used - Fossil Fuel: Total"],
+        ],
+        keys=["Non-metalice minerals", "Metal ores", "Fossil fuel"],
+        axis=1,
+    )
     continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
     df.index.names = ["region", "year"]
     df_agg = df.rename(index=dict(continent.index)).groupby(level=df.index.names).sum()
@@ -910,15 +1023,60 @@ def graph1():
     df_agg_pop = df_agg.div(pop_agg, axis=0)
     j = 0
     for ext in df.columns:
-        df_agg[ext].unstack().T.plot.area(ax=axes[j, 0])
-        df_agg_pop[ext].unstack().T.plot(ax=axes[j, 1])
+
+        df_agg_rolled = (
+            df_agg[ext]
+            .unstack()
+            .T.drop([2014, 2015, 2016, 2017])
+            .rolling(3, center=True)
+            .mean()
+        ) / 1000000
+        df_agg_rolled.loc[[1995, 2013]] = (
+            df_agg[ext].unstack().T.loc[[1995, 2013]] / 1000000
+        )
+        if ext == "Non-metalice minerals":
+            for i in range(1995, 2011, 1):
+                df_agg_rolled.loc[i]["India"] = np.nan
+        df_agg_rolled.plot.area(ax=axes[j, 0], color=cmap)
+        ax2 = axes[j, 0].twinx()
+        df_agg_rolled.sum(axis=1).div(total[ext].values / 1000000 / 100).plot(
+            ax=ax2, color="black", ls="dashed"
+        )
+        ax2.set_ylim([0, 7])
+        ax2.set_ylabel("Share of world footprint (\%)")
+        axes[j, 0].set_ylabel(ext + " (Gt)")
+        axes[j, 0].legend(fontsize=7, framealpha=0, ncol=2)
+
+        df_agg_pop_rolled = (
+            df_agg_pop[ext]
+            .unstack()
+            .T.drop([2014, 2015, 2016, 2017])
+            .rolling(3, center=True)
+            .mean()
+        )
+        df_agg_pop_rolled.loc[[1995, 2013]] = (
+            df_agg_pop[ext].unstack().T.loc[[1995, 2013]]
+        )
+        if ext == "Non-metalice minerals":
+            for i in range(1995, 2011, 1):
+                df_agg_pop_rolled.loc[i]["India"] = np.nan
+        df_agg_pop_rolled.plot(ax=axes[j, 1], color=cmap)
+        axes[j, 1].set_ylabel(ext + " (t/capita)")
+        axes[j, 1].legend(fontsize=7, ncol=2, framealpha=0)
 
         j += 1
 
+        axes[0, 1].set_ylim(top=1.6)
+        axes[1, 1].set_ylim(top=0.48)
+        # axes[2,1].set_ylim(top=0.55)
+
+        plt.tight_layout()
+
 
 graph1()
-# lisser ?
-# définir meilleurs continents
+
+
+# attention, on a supprimé India de non-metallic pour 1995-2009
 
 
 def graph2():
@@ -1041,6 +1199,9 @@ graph4()
 # rajouter couleurs
 
 
+#####################
+
+
 def graph9():
 
     fig, axes = plt.subplots(1, 2, figsize=(9, 4))
@@ -1100,7 +1261,7 @@ def graph9():
 graph9()
 
 
-def graph5():  # comparaisons déflation
+def graphx():  # comparaisons déflation
 
     x = (
         constant_ppp.unstack().swaplevel()
