@@ -1084,7 +1084,7 @@ def graph2():
     fig, axes = plt.subplots(1, figsize=(8, 8))
 
     col = pd.read_excel("colors_fig2.xlsx", index_col=[0])
-    cmap = sns.color_palette("deep", n_colors=6, as_cmap="True")
+    cmap = sns.color_palette("deep", as_cmap="True")
     dict_color = dict(
         zip(col["continent"].unique(), cmap[0 : len(col["continent"].unique())])
     )
@@ -1219,9 +1219,225 @@ def graph3():
 
 
 graph3()
+# rajouter des pourcentages sur les barres ou alors la population à côté pour comparer
 
 
 def graph4():
+
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+    years = [i for i in range(2002, 2017, 1)]
+
+    col = pd.read_excel("continent.xlsx", index_col=[0])
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+    dict_color = dict(
+        zip(col["continent"].unique(), cmap[0 : len(col["continent"].unique())])
+    )
+    col["color"] = col["continent"].replace(dict_color)
+
+    def adjust_lightness(color, amount=0.5):
+        import matplotlib.colors as mc
+        import colorsys
+
+        try:
+            c = mc.cnames[color]
+        except:
+            c = color
+        c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+        return colorsys.hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
+
+    exp = (
+        Y_health_NHA_euros.sum(axis=1)
+        .loc[constant_ppp.unstack().index]
+        .unstack()
+        .div(XReuros.loc[constant_ppp.columns], axis=0)
+        .unstack()
+    )
+    y = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+        .stack()
+    ).loc[constant_ppp.unstack().swaplevel().index] / exp.swaplevel()
+    x = exp / pop.stack().loc[constant_ppp.unstack().swaplevel().index].swaplevel()
+    for reg in y.unstack().index:
+        for year in range(2002, 2016, 1):
+            axes[0].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+                edgecolors="black",
+            )
+
+    y = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+            .stack()
+        ).loc[constant_ppp.unstack().swaplevel().index]
+        / constant_ppp.unstack().swaplevel()
+        * 1000
+    )
+    x = (
+        constant_ppp.unstack().swaplevel()
+        / pop.stack().loc[constant_ppp.unstack().swaplevel().index]
+    )
+    k = 0
+
+    for reg in y.unstack().index:
+        for year in years:
+            axes[1].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+                edgecolors="black",
+            )
+            axes[2].scatter(
+                year,
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(k / 49),
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+                edgecolors="black",
+            )
+        k += 1
+
+    y_world = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+        )[years].sum()
+        / constant_ppp.sum()
+        * 1000
+    )
+    axes[2].plot(y_world.index, y_world)
+
+    axes[1].set_ylim(top=5.2)
+    axes[2].set_ylim(top=5.2)
+    axes[2].set_xlim(right=2018)
+    axes[2].set_xticks([2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016])
+
+    plt.tight_layout()
+    plt.savefig("figures/fig4.pdf")
+
+
+graph4()
+
+###########
+
+
+def graph4old():
+
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+    years = [i for i in range(2002, 2017, 1)]
+
+    exp = (
+        Y_health_NHA_euros.sum(axis=1)
+        .loc[constant_ppp.unstack().index]
+        .unstack()
+        .div(XReuros.loc[constant_ppp.columns], axis=0)
+        .unstack()
+    )
+    y = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+        .stack()
+    ).loc[constant_ppp.unstack().swaplevel().index] / exp.swaplevel()
+    x = exp / pop.stack().loc[constant_ppp.unstack().swaplevel().index].swaplevel()
+    for reg in y.unstack().index:
+        for year in range(2002, 2016, 1):
+            axes[0].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                color=str(1 - (year - 2002) / 13),
+                edgecolors="black",
+            )
+
+    y = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+            .stack()
+        ).loc[constant_ppp.unstack().swaplevel().index]
+        / constant_ppp.unstack().swaplevel()
+        * 1000
+    )
+    x = (
+        constant_ppp.unstack().swaplevel()
+        / pop.stack().loc[constant_ppp.unstack().swaplevel().index]
+    )
+    k = 0
+
+    for reg in y.unstack().index:
+        for year in years:
+            axes[1].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                color=str(1 - (year - 2002) / 14),
+                edgecolors="black",
+            )
+            axes[2].scatter(
+                year,
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                color=str(k / 49),
+                edgecolors="black",
+            )
+        k += 1
+
+    y_world = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+        )[years].sum()
+        / constant_ppp.sum()
+        * 1000
+    )
+    axes[2].plot(y_world.index, y_world)
+
+    axes[1].set_ylim(top=5.2)
+    axes[2].set_ylim(top=5.2)
+    axes[2].set_xlim(right=2018)
+    axes[2].set_xticks([2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016])
+
+
+graph4old()
+# rajouter couleurs
+
+
+#####################
+
+
+def graph4bis():
 
     fig, axes = plt.subplots(1, 2, figsize=(9, 4))
     years = [i for i in range(2002, 2017, 1)]
@@ -1245,11 +1461,25 @@ def graph4():
     )
     k = 0
 
+    exp = (
+        Y_health_NHA_euros.sum(axis=1)
+        .loc[constant_ppp.unstack().index]
+        .unstack()
+        .div(XReuros.loc[constant_ppp.columns], axis=0)
+        .unstack()
+    )
+    y0 = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+        .stack()
+    ).loc[constant_ppp.unstack().swaplevel().index] / exp.swaplevel()
+
     for reg in y.unstack().index:
         for year in years:
             axes[0].scatter(
-                np.log(x.loc[reg].loc[year]),
-                y.loc[reg].loc[year],
+                year,
+                y0.loc[reg].loc[year],
                 s=pop.loc[reg].loc[year] / 6000,
                 color=str(1 - (year - 2002) / 14),
                 edgecolors="black",
@@ -1262,6 +1492,13 @@ def graph4():
                 edgecolors="black",
             )
         k += 1
+
+    y0_world = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+    )[years].sum() / exp.unstack().sum()
+    axes[0].plot(y0_world.index, y0_world)
 
     y_world = (
         (
@@ -1277,17 +1514,13 @@ def graph4():
     )
     axes[1].plot(y_world.index, y_world)
 
-    axes[0].set_ylim(top=5.2)
-    axes[1].set_ylim(top=5.2)
+    axes[0].set_ylim(top=9.5)
+    axes[1].set_ylim(top=9.5)
     axes[1].set_xlim(right=2018)
     axes[1].set_xticks([2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016])
 
-
-graph4()
-# rajouter couleurs
-
-
-#####################
+    plt.tight_layout()
+    plt.savefig("figures/fig4bis.pdf")
 
 
 def graph9():
