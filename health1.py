@@ -8,6 +8,8 @@ from matplotlib import colors as mcolors
 import math
 import country_converter as coco
 import seaborn as sns
+import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
 
 cc = coco.CountryConverter()
 pathexio = "C:/Users/andrieba/Documents/"
@@ -580,7 +582,7 @@ def ppp_health():
     current_ppp.columns = [int(i) for i in current_ppp.columns]
 
     CPI_US = pd.read_excel("CPI US eurostat.xlsx", index_col=0, header=0)
-    CPI_US = CPI_US / CPI_US.loc["US"][2017]
+    CPI_US = CPI_US / CPI_US.loc["US"][2016]
     constant_ppp = current_ppp.drop([2000, 2001], axis=1).div(CPI_US.loc["US"], axis=1)
 
     return constant_ppp
@@ -1083,15 +1085,33 @@ graph1()
 def graph2():
     fig, axes = plt.subplots(1, figsize=(8, 8))
 
-    col = pd.read_excel("colors_fig2.xlsx", index_col=[0])
-    cmap = sns.color_palette("deep", as_cmap="True")
+    col = pd.read_excel("continent.xlsx", index_col=[0])
+    cmap = sns.color_palette("colorblind", as_cmap="True")
     dict_color = dict(
         zip(col["continent"].unique(), cmap[0 : len(col["continent"].unique())])
     )
     col["color"] = col["continent"].replace(dict_color)
+    handles = []
+    for i in dict_color.keys():
+        handles.append(
+            mlines.Line2D(
+                [],
+                [],
+                linestyle="None",
+                marker=".",
+                markersize=10,
+                label=i,
+                color=dict_color[i],
+            )
+        )
+    handles.append(
+        mlines.Line2D(
+            [], [], color="black", linestyle="--", markersize=80, label="World mean"
+        )
+    )
 
-    col_line = pd.read_excel("colors_fig2.xlsx", index_col=[0])
-    cmap = sns.color_palette("pastel", n_colors=6, as_cmap="True")
+    col_line = pd.read_excel("continent.xlsx", index_col=[0])
+    cmap = sns.color_palette("pastel", as_cmap="True")
     dict_color = dict(
         zip(
             col_line["continent"].unique(),
@@ -1144,12 +1164,13 @@ def graph2():
     axes.set_ylabel("Energy footprint (TJ)")
     axes.set_xlim(right=106)
 
+    axes.legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
+
     plt.tight_layout()
     plt.savefig("figures/fig2.pdf")
 
 
 graph2()
-# légende
 
 
 def graph3():
@@ -1223,6 +1244,166 @@ graph3()
 
 
 def graph4():
+
+    fig, axes = plt.subplots(2, 2, figsize=(9, 9))
+    years = [i for i in range(2002, 2017, 1)]
+
+    col = pd.read_excel("continent.xlsx", index_col=[0])
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+    dict_color = dict(
+        zip(col["continent"].unique(), cmap[0 : len(col["continent"].unique())])
+    )
+    col["color"] = col["continent"].replace(dict_color)
+
+    def adjust_lightness(color, amount=0.5):
+        import matplotlib.colors as mc
+        import colorsys
+
+        try:
+            c = mc.cnames[color]
+        except:
+            c = color
+        c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+        return colorsys.hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
+
+    exp = (
+        Y_health_NHA_euros.sum(axis=1)
+        .loc[constant_ppp.unstack().index]
+        .unstack()
+        .div(XReuros.loc[constant_ppp.columns], axis=0)
+        .unstack()
+    )
+    y = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+        .stack()
+    ).loc[constant_ppp.unstack().swaplevel().index] / exp.swaplevel()
+    x = exp / pop.stack().loc[constant_ppp.unstack().swaplevel().index].swaplevel()
+    for reg in y.unstack().index:
+        for year in range(2002, 2016, 1):
+            axes[0, 0].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+            )
+            axes[1, 0].scatter(
+                year,
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+            )
+
+    y = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+            .stack()
+        ).loc[constant_ppp.unstack().swaplevel().index]
+        / constant_ppp.unstack().swaplevel()
+        * 1000
+    )
+    x = (
+        constant_ppp.unstack().swaplevel()
+        / pop.stack().loc[constant_ppp.unstack().swaplevel().index]
+    )
+    k = 0
+
+    for reg in y.unstack().index:
+        for year in years:
+            axes[0, 1].scatter(
+                np.log(x.loc[reg].loc[year]),
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+            )
+            axes[1, 1].scatter(
+                year,
+                y.loc[reg].loc[year],
+                s=pop.loc[reg].loc[year] / 6000,
+                # color=str(k / 49),
+                # color=str(1 - (year - 2002) / 14),
+                color=adjust_lightness(
+                    col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
+                ),
+            )
+        k += 1
+
+    y_world = (
+        (
+            (
+                satellite["Energy Carrier Net Total"]
+                - satellite["Energy Carrier Net LOSS"]
+            )
+            .unstack()
+            .drop(1995, axis=1)
+        )[years].sum()
+        / constant_ppp.sum()
+        * 1000
+    )
+    axes[1, 1].plot(y_world.index, y_world, ls="dashed", color="black", zorder=2)
+
+    axes[0, 0].set_ylim(top=9.5)
+    axes[1, 0].set_ylim(top=9.5)
+    axes[0, 1].set_ylim(top=9.5)
+    axes[1, 1].set_ylim(top=9.5)
+    axes[1, 1].set_xlim(right=2018)
+    axes[1, 1].set_xticks([2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016])
+
+    axes[0, 0].set_ylabel("Energy intensity (MJ/USdol)")  # $, essayer en svg
+    axes[0, 1].set_ylabel("Energy intensity (MJ/USdolppp2016)")
+    axes[1, 0].set_ylabel("Energy intensity (MJ/USdolppp2016)")
+    axes[1, 1].set_ylabel("Energy intensity (MJ/USdolppp2016)")
+    axes[0, 0].set_xlabel("Health expenditures (USdol)")
+    axes[0, 1].set_xlabel("Health expenditures (USdol)")
+    axes[1, 0].set_xlabel("Year")
+    axes[1, 1].set_xlabel("Year")
+
+    handles = [
+        mlines.Line2D(
+            [], [], color="black", linestyle="--", markersize=80, label="World mean"
+        )
+    ]
+    for i in dict_color.keys():
+        handles.append(
+            mlines.Line2D(
+                [],
+                [],
+                linestyle="None",
+                marker=".",
+                markersize=10,
+                label=i,
+                color=dict_color[i],
+            )
+        )
+    axes[0, 1].legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
+    axes[1, 1].legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
+
+    plt.tight_layout()
+    plt.savefig("figures/fig4.pdf")
+
+
+graph4()
+# rajouter les world mean partout
+
+######
+
+
+def graph4old2():
 
     fig, axes = plt.subplots(1, 3, figsize=(13, 4))
     years = [i for i in range(2002, 2017, 1)]
@@ -1339,7 +1520,7 @@ def graph4():
     plt.savefig("figures/fig4.pdf")
 
 
-graph4()
+graph4old2()
 
 ###########
 
