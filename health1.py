@@ -97,10 +97,13 @@ def dict_regions_update():
     dict_regions["Wallis and Futuna"] = "Wallis and Futuna Islands"
     dict_regions["Micronesia, Federated States of"] = "Micronesia, Fed. Sts."
 
-    dict_regions["VIR"] = "Virgin Islands, U.S."
-    dict_regions["GMB"] = "The Gambia"
+    dict_regions["VIR"] = "United States Virgin Islands"
+    dict_regions["GMB"] = "Gambia"
     dict_regions["NAM"] = "Namibia"
-    dict_regions["BHS"] = "The Bahamas"
+    dict_regions["BHS"] = "Bahamas"
+    dict_regions["The Bahamas"] = "Bahamas"
+    dict_regions["The Gambia"] = "Gambia"
+    dict_regions["Virgin Islands, U.S."] = "United States Virgin Islands"
 
     for j in [
         "Africa Eastern and Southern",
@@ -219,6 +222,28 @@ def dict_regions_update():
         "North America (ICP)",
         "South Asia (ICP)",
         "Sub-Saharan Africa (ICP)",
+        "Andean Latin America",
+        "Australasia",
+        "Central Latin America",
+        "Central Sub-Saharan Africa",
+        "East Asia",
+        "Eastern Sub-Saharan Africa",
+        "Global",
+        "High-income",
+        "High-income Asia Pacific",
+        "High-income North America",
+        "Latin America and Caribbean",
+        "North Africa and Middle East",
+        "Southeast Asia",
+        "Southern Latin America",
+        "Southern Sub-Saharan Africa",
+        "Tropical Latin America",
+        "Western Sub-Saharan Africa",
+        "Central Europe",
+        "Oceania",
+        "Central Asia",
+        "Western Europe",
+        "Eastern Europe",
     ]:
         dict_regions[j] = "Z - Aggregated categories"
     return None
@@ -261,7 +286,7 @@ def rename_region(df, level="LOCATION"):
     df = df.reindex(ind)
     df = df.reset_index().set_index(index_names)
     for i in df.index.get_level_values(level).unique():
-        if i not in name_short and i != i == "Z - Aggregated categories":
+        if i not in name_short and i != "Z - Aggregated categories":
             print(
                 i
                 + " is not in dict_regions\nAdd it using\n  >>> dict_regions['"
@@ -273,49 +298,57 @@ def rename_region(df, level="LOCATION"):
     return df
 
 
-# .........................
+# ......
 
-QI = pd.read_csv(
-    "IHME_GBD_2016_HAQ_INDEX_1990_2016_SCALED_CAUSE_VALUES/IHME_GBD_2016_HAQ_INDEX_1990_2016_SCALED_CAUSE_VALUES_Y2018M05D23.csv",
-    header=0,
-    index_col=[1, 2, 4, 6],
-).xs("Healthcare Access and Quality Index", level=2)
-QI = rename_region(rename_region(QI, "location_name"), "ihme_loc_id")["val"].unstack()
-QI = QI.loc[[i[0] == i[1] for i in QI.index]]
-QI = QI.droplevel(0)
 
 population = pd.read_csv(
     "worldbank population/API_SP.POP.TOTL_DS2_en_csv_v2_3852487.csv",
     header=[2],
-    index_col=1,
+    index_col=0,
 )
-population = rename_region(population, "Country Code")[
-    ["1990", "1995", "2000", "2005", "2010", "2016"]
-]
-population.loc["Taiwan"] = [20478520, 21356033, 21966527, 22705713, 23187551, 23618200]
-population = population.loc[QI.index]
-population.columns = [1990, 1995, 2000, 2005, 2010, 2016]
-
+population = rename_region(population, "Country Name")[
+    ["1995", "2000", "2005", "2010", "2015"]
+].drop("Z - Aggregated categories")
+population.loc["Taiwan"] = [21356033, 21966527, 22705713, 23187551, 23618200]
+population.columns = [1995, 2000, 2005, 2010, 2015]
 pop_agg = population
 pop_agg["region"] = cc.convert(names=pop_agg.index, to="EXIO3")
 pop_agg = (
     pop_agg.reset_index()
     .set_index("region")
-    .drop("Country Code", axis=1)
+    .drop("Country Name", axis=1)
     .groupby(level="region")
     .sum()
 )
 
-QI_agg = population * QI
-QI_agg["region"] = cc.convert(names=QI_agg.index, to="EXIO3")
-QI_agg = (
-    QI_agg.reset_index()
-    .set_index("region")
-    .drop("index", axis=1)
-    .groupby(level="region")
+HAQ = (
+    (
+        rename_region(
+            pd.read_csv(
+                "HAQ 2015.csv",
+                index_col=["indicator_name", "year_id", "location_name", "location_id"],
+            )
+            .loc["Healthcare Access and Quality"]["val"]
+            .unstack(level="year_id"),
+            level="location_name",
+        )
+        .drop("Z - Aggregated categories")
+        .reindex(columns=[1990, 1995, 2000, 2005, 2010, 2015])
+        .drop([1990], axis=1)
+    )
+    .groupby(level=0)
     .sum()
 )
-QI_agg = (QI_agg / pop_agg)[[1995, 2000, 2005, 2010, 2016]]
+HAQ_agg = HAQ.drop("Anguilla") * population.loc[HAQ.drop("Anguilla").index]
+HAQ_agg["region"] = cc.convert(names=HAQ_agg.index, to="EXIO3")
+HAQ_agg = (
+    HAQ_agg.reset_index()
+    .set_index("region")
+    .drop("location_name", axis=1)
+    .groupby(level="region")
+    .sum()
+) / pop_agg
+
 
 # ......
 
@@ -582,7 +615,7 @@ def ppp_health():
     current_ppp.columns = [int(i) for i in current_ppp.columns]
 
     CPI_US = pd.read_excel("CPI US eurostat.xlsx", index_col=0, header=0)
-    CPI_US = CPI_US / CPI_US.loc["US"][2016]
+    CPI_US = CPI_US / CPI_US.loc["US"][2015]
     constant_ppp = current_ppp.drop([2000, 2001], axis=1).div(CPI_US.loc["US"], axis=1)
 
     return constant_ppp
@@ -901,7 +934,7 @@ def graph1():
             ].sum(axis=1),
             satellite["Domestic Extraction Used - Fossil Fuel: Total"],
         ],
-        keys=["Non-metalice minerals", "Metal ores", "Fossil fuel"],
+        keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
         axis=1,
     )
     total = pd.concat(
@@ -915,7 +948,7 @@ def graph1():
             ].sum(),
             total_sat.loc["Domestic Extraction Used - Fossil Fuel: Total"],
         ],
-        keys=["Non-metalice minerals", "Metal ores", "Fossil fuel"],
+        keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
         axis=1,
     )
     continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
@@ -926,6 +959,9 @@ def graph1():
     )
     df_agg_pop = df_agg.div(pop_agg, axis=0)
     j = 0
+    share = pd.DataFrame()
+    rolled = pd.DataFrame()  # only to have numeric values for paper
+    rolled_pop = pd.DataFrame()
     for ext in df.columns:
 
         df_agg_rolled = (
@@ -938,7 +974,7 @@ def graph1():
         df_agg_rolled.loc[[1995, 2013]] = (
             df_agg[ext].unstack().T.loc[[1995, 2013]] / 1000000
         )
-        if ext == "Non-metalice minerals":
+        if ext == "Non-metalic minerals":
             for i in range(1995, 2011, 1):
                 df_agg_rolled.loc[i]["India"] = np.nan
         df_agg_rolled.plot.area(ax=axes[j, 0], color=cmap)
@@ -946,6 +982,8 @@ def graph1():
         df_agg_rolled.sum(axis=1).div(total[ext].values / 1000000 / 100).plot(
             ax=ax2, color="black", ls="dashed"
         )
+        share[ext] = df_agg_rolled.sum(axis=1).div(total[ext].values / 1000000 / 100)
+        rolled[ext] = df_agg_rolled.stack()  # for num data
         ax2.set_ylim([0, 7])
         ax2.set_ylabel("Share of world footprint (\%)")
         axes[j, 0].set_ylabel(ext + " (Gt)")
@@ -961,10 +999,11 @@ def graph1():
         df_agg_pop_rolled.loc[[1995, 2013]] = (
             df_agg_pop[ext].unstack().T.loc[[1995, 2013]]
         )
-        if ext == "Non-metalice minerals":
+        if ext == "Non-metalic minerals":
             for i in range(1995, 2011, 1):
                 df_agg_pop_rolled.loc[i]["India"] = np.nan
         df_agg_pop_rolled.plot(ax=axes[j, 1], color=cmap)
+        rolled_pop[ext] = df_agg_pop_rolled.stack()
         axes[j, 1].set_ylabel(ext + " (t/capita)")
         axes[j, 1].legend(fontsize=7, ncol=2, framealpha=0)
 
@@ -978,8 +1017,10 @@ def graph1():
         plt.savefig("figures/fig1.pdf", bbox="tight")
         plt.savefig("figures/fig1.png", bbox="tight")
 
+    return rolled, rolled_pop, total, share
 
-graph1()
+
+rolled, rolled_pop, total, share = graph1()
 
 
 # attention, on a supprimé India de non-metallic pour 1995-2009
@@ -1023,13 +1064,13 @@ def graph2():
     )
     col_line["color"] = col_line["continent"].replace(dict_color)
 
-    years = [1995, 2000, 2005, 2010, 2016]
-    x = QI_agg
+    years = [1995, 2000, 2005, 2010, 2015]
+    x = HAQ_agg
     y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
     y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
     y = (y_pri - y_loss)[years]
-    regression = scipy.stats.linregress(x[2016], np.log(y[2016]))
-    x_lin = np.linspace(x[2016].min(), x[2016].max(), 100)
+    regression = scipy.stats.linregress(x[2015], np.log(y[2015]))
+    x_lin = np.linspace(x[2015].min(), x[2015].max(), 100)
     axes.plot(x_lin, np.exp(x_lin * regression[0] + regression[1]), color="black")
     print(str(round(regression[2] ** 2, 2)))
 
@@ -1038,7 +1079,7 @@ def graph2():
 
     annotations_fig2 = pd.read_excel("region names.xlsx", index_col=[0])
 
-    for reg in pop[2016].sort_values(ascending=False).index:
+    for reg in pop[2015].sort_values(ascending=False).index:
         axes.plot(
             x.loc[reg],
             y.loc[reg],
@@ -1047,10 +1088,10 @@ def graph2():
             zorder=1,
         )
         axes.scatter(
-            x.loc[reg].loc[2016],
-            y.loc[reg].loc[2016],
+            x.loc[reg].loc[2015],
+            y.loc[reg].loc[2015],
             label=reg,
-            s=pop.loc[reg].loc[2016] / 1000,
+            s=pop.loc[reg].loc[2015] / 1000,
             color=col.loc[reg].loc["color"],
             zorder=2
             # edgecolor='black'
@@ -1058,13 +1099,13 @@ def graph2():
         axes.annotate(
             annotations_fig2.loc[reg].loc["full name"],
             (
-                x.loc[reg].loc[2016] + annotations_fig2.loc[reg].loc["x axis"],
-                y.loc[reg].loc[2016] + annotations_fig2.loc[reg].loc["y axis"],
+                x.loc[reg].loc[2015] + annotations_fig2.loc[reg].loc["x axis"],
+                y.loc[reg].loc[2015] + annotations_fig2.loc[reg].loc["y axis"],
             ),
         )
 
     axes.set_xlabel("Healthcare Access and Quality Index")
-    axes.set_ylabel("Energy footprint (TJ)")
+    axes.set_ylabel("Energy footprint (TJ/capita)")
     axes.set_xlim(right=106)
 
     axes.legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
@@ -1087,22 +1128,22 @@ def graph3():
     y = y_pri - y_loss
 
     df = pd.concat(
-        [y[2016] for i in range(34, 101, 1)],
+        [y[2015] for i in range(34, 101, 1)],
         keys=[i for i in range(34, 101, 1)],
         axis=1,
     )
 
-    x = QI_agg[2016]
-    regression = scipy.stats.linregress(x, np.log(y[2016]))
+    x = HAQ_agg[2015]
+    regression = scipy.stats.linregress(x, np.log(y[2015]))
     for ind in range(34, 101, 1):
-        for reg in QI_agg.index:
+        for reg in HAQ_agg.index:
             if df.loc[reg].loc[ind] < ind:
                 if df[ind].loc[reg] < np.exp(regression[0] * ind + regression[1]):
                     df[ind].loc[reg] = np.exp(regression[0] * ind + regression[1])
 
     continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
     df_agg = (
-        df.mul(pop[2016], axis=0)
+        df.mul(pop[2015], axis=0)
         .rename(index=dict(continent.index))
         .groupby(level=0)
         .sum()
@@ -1267,12 +1308,12 @@ def graph4():
     axes[0, 1].set_ylim(top=9.5)
     axes[1, 1].set_ylim(top=9.5)
     axes[1, 1].set_xlim(right=2018)
-    axes[1, 1].set_xticks([2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016])
+    # axes[1, 1].set_xticks([2002, 2005, 2008, 2010, 2012, 2014, 2015])
 
     axes[0, 0].set_ylabel("Energy intensity (MJ/USdol)")  # $, essayer en svg
-    axes[0, 1].set_ylabel("Energy intensity (MJ/USdolppp2016)")
-    axes[1, 0].set_ylabel("Energy intensity (MJ/USdolppp2016)")
-    axes[1, 1].set_ylabel("Energy intensity (MJ/USdolppp2016)")
+    axes[0, 1].set_ylabel("Energy intensity (MJ/USdolppp2015)")
+    axes[1, 0].set_ylabel("Energy intensity (MJ/USdolppp2015)")
+    axes[1, 1].set_ylabel("Energy intensity (MJ/USdolppp2015)")
     axes[0, 0].set_xlabel("Health expenditures (USdol)")
     axes[0, 1].set_xlabel("Health expenditures (USdol)")
     axes[1, 0].set_xlabel("Year")
@@ -1309,6 +1350,44 @@ graph4()
 
 
 #####################
+
+
+# Numeric data in paper
+total = pd.concat(
+    [
+        total_imp.loc["Domestic Extraction Used - Non-metalic Minerals"],
+        total_imp.loc[
+            [
+                "Domestic Extraction Used - Iron Ore",
+                "Domestic Extraction Used - Non-ferous metal ores",
+            ]
+        ].sum(),
+        total_sat.loc["Domestic Extraction Used - Fossil Fuel: Total"],
+    ],
+    keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
+    axis=1,
+)
+
+df = pd.concat(
+    [
+        impacts["Domestic Extraction Used - Non-metalic Minerals"],
+        impacts[
+            [
+                "Domestic Extraction Used - Iron Ore",
+                "Domestic Extraction Used - Non-ferous metal ores",
+            ]
+        ].sum(axis=1),
+        satellite["Domestic Extraction Used - Fossil Fuel: Total"],
+    ],
+    keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
+    axis=1,
+)
+
+world_share = pd.DataFrame(
+    df.groupby(level=1).sum().drop([2014, 2015, 2016, 2017]).stack().values
+    / total.stack().values,
+    index=df.groupby(level=1).sum().drop([2014, 2015, 2016, 2017]).stack().index,
+)[0].unstack()
 
 
 # .....SI
