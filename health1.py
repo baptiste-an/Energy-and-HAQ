@@ -383,15 +383,15 @@ plt_rcParams()
 # mcolors.to_rgba('darkblue')
 
 
-XReuros = pd.read_excel("exchange rates.xlsx").loc[0]
+XReuros = pd.read_excel("exchange rates.xlsx").loc[0].drop([2016, 2017, 2018])
 # exchange rate for euro zone, euros/dollars
-pop = pd.read_excel("pop.xlsx", index_col=[0]).drop([2018, 2019], axis=1)
+pop = pd.read_excel("pop.xlsx", index_col=[0]).drop([2016, 2017, 2018, 2019], axis=1)
 
 
 def Y_health_NHA_euros():
 
     Yhealth = pd.DataFrame()  # Exiobase health sector expenditures
-    for i in range(1995, 2019, 1):
+    for i in range(1995, 2016, 1):
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
         Yhealth[i] = (
             pd.read_csv(
@@ -410,6 +410,8 @@ def Y_health_NHA_euros():
         .groupby(level="region")
         .sum()
         / 1000
+    ).drop(
+        [2016, 2017, 2018], axis=1
     )  # WHO expenditures in NHA format in kUS$
     expendituresOECD_95_99 = pd.read_excel(
         "dépenses santé OCDE.xlsx", header=[0], index_col=[0]
@@ -441,7 +443,7 @@ def Y_health_NHA_euros():
 
     health_shares_OECD = (
         pd.read_excel("Health Shares OECD.xlsx", index_col=[0, 1], header=[0, 1]) / 100
-    )
+    ).drop([2016, 2017, 2018], axis=1)
     health_shares_OECD = pd.DataFrame(
         health_shares_OECD.stack()
         .T.interpolate(method="linear", axis=0)
@@ -499,95 +501,8 @@ def Y_health_NHA_euros():
 
 Y_health_NHA_euros = Y_health_NHA_euros()
 
-# exp_cap_euros = Y_health_NHA_euros.sum(axis=1).drop(2018) / pop.stack()
-
-
-def useless_ICP():
-    path = pathexio + "GitHub/exiobase-ISTerre/"
-    XReuros = pd.read_excel("exchange rates.xlsx").loc[0]
-    # exchange rate for euro zone, euros/dollars
-    pop = pd.read_excel("pop.xlsx", index_col=[0]).drop([2018, 2019], axis=1)
-
-    indexCPI2017 = pd.read_excel(
-        path + "data_CPI/index CPI 2017, US=1.xlsx",
-        header=[0],
-        index_col=[0],
-    )
-    indexCPI2011 = pd.read_excel(
-        path + "data_CPI/index CPI 2011, US=1.xlsx",
-        header=[0],
-        index_col=[0],
-    )
-    indexCPI2005 = pd.read_excel(
-        path + "data_CPI/index CPI 2005, US=1.xlsx",
-        header=[0],
-        index_col=[0],
-    )
-    indexCPI1996 = pd.read_excel(
-        path + "data_CPI/index CPI 1996, US=1.xlsx",
-        header=[0],
-        index_col=[0],
-    )
-
-    index = (  # current$/2017US$ppp
-        pd.read_csv("index_health.txt", index_col=[0, 1])["0"]
-        .unstack()
-        .mul(XReuros.drop([1995, 2018]), axis=0)
-    )  # => current€/2017US$ppp
-
-    Y_health_NHA_ppp17 = (
-        Y_health_NHA_euros.sum(axis=1).drop([1995, 2018])
-        / pd.DataFrame(
-            index.stack(), index=Y_health_NHA_euros.drop([1995, 2018]).index
-        )[0]
-    )
-    Y_health_NHA_ppp_cap = Y_health_NHA_ppp17 / pop.stack().swaplevel().drop([1995])
-
-    # aFP fonction des dépenses en santé pour les quatre années de l'ICP
-
-    ### GRAPHS
-
-    # ça "fit" uniquement en 2005
-    fig, axes = plt.subplots(4, figsize=(3, 10))
-    k = 0
-    # R2 = 0.05, 0.23, 0.05, 0.02
-    for ind in [indexCPI1996, indexCPI2005, indexCPI2011, indexCPI2017]:
-        year = [1996, 2005, 2011, 2017][k]
-        ax = axes[k]
-
-        ppp = (
-            Y_health_NHA.sum(axis=1).drop(2018).loc[year]
-            / XReuros.loc[year]
-            / ind["CPI: 06 - Health"]
-        )
-        MJ_pri = satellite["Energy Carrier Net Total"].unstack()[year]
-        MJ_loss = satellite["Energy Carrier Net LOSS"].unstack()[year]
-        MJ_fin = MJ_pri - MJ_loss
-        y = MJ_fin / ppp
-        x = exp_cap.loc[year] / XReuros.loc[year] / ind["CPI: 06 - Health"]
-
-        regression = scipy.stats.linregress(x, y)
-        ax.scatter(x, y, color="darkblue")
-        ax.plot(x, regression[1] + regression[0] * x, color="darkorange")
-        ax.set_ylim([0, 3.5])
-        print(str(round(regression[2] ** 2, 2)))
-        k += 1
-
-        # augmentation de l'aFP
-        (
-            (
-                satellite["Energy Carrier Net Total"]
-                - satellite["Energy Carrier Net LOSS"]
-            )
-            .unstack()
-            .drop(1995, axis=1)
-            .sum()
-            / Y_health_NHA_ppp17.unstack().sum(axis=1)
-        ).plot()
-
 
 ##################
-dict_regions = cc.get_correspondence_dict("name_short", "EXIO3")
 
 
 def ppp_health():
@@ -608,13 +523,19 @@ def ppp_health():
         .replace(dict({":": np.nan}))
         .astype("float")
     )
-    current_ppp = (ppp_all_regions * pop_all_regions).unstack().drop("2018", axis=1)
+    current_ppp = (
+        (ppp_all_regions * pop_all_regions)
+        .unstack()
+        .drop(["2016", "2017", "2018"], axis=1)
+    )
     current_ppp["region"] = cc.convert(names=current_ppp.index, to="EXIO3")
     current_ppp = current_ppp.reset_index()
     current_ppp = current_ppp.set_index("region").groupby(level="region").sum()
     current_ppp.columns = [int(i) for i in current_ppp.columns]
 
-    CPI_US = pd.read_excel("CPI US eurostat.xlsx", index_col=0, header=0)
+    CPI_US = pd.read_excel("CPI US eurostat.xlsx", index_col=0, header=0).drop(
+        [2016, 2017], axis=1
+    )
     CPI_US = CPI_US / CPI_US.loc["US"][2015]
     constant_ppp = current_ppp.drop([2000, 2001], axis=1).div(CPI_US.loc["US"], axis=1)
 
@@ -626,7 +547,7 @@ constant_ppp = ppp_health()
 
 def LkYhealth():
     LkY = pd.DataFrame()
-    for i in range(1995, 2019, 1):
+    for i in range(1995, 2016, 1):
 
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
         Y = (
@@ -668,7 +589,7 @@ def LkYhealth():
 def SLkYhealth():
     SLkYhealth_imp = pd.DataFrame()
     SLkYhealth_sat = pd.DataFrame()
-    for i in range(1995, 2019, 1):
+    for i in range(1995, 2016, 1):
         LkYhealth = pd.read_csv(
             pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".txt",
             header=[0],
@@ -695,15 +616,11 @@ def SLkYhealth():
     SLkYhealth_sat.to_csv("Data/SLkYhealth/SLkYhealth_sat.txt")
 
 
-### new slky
-
-for i in [1]:
-    SLkYhealth_imp = pd.DataFrame()
-    SLkYhealth_sat = pd.DataFrame()
-
+def imports_dependency():
     imports_imp = pd.DataFrame()
     imports_sat = pd.DataFrame()
-    for i in range(1996, 1997, 1):
+
+    for i in [2015]:
         LkYhealth = pd.read_csv(
             pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".txt",
             header=[0],
@@ -717,8 +634,6 @@ for i in [1]:
         SLkYhealth_i = pd.DataFrame()
         imports_i = pd.DataFrame()
         for j in S.index:
-            SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
-
             imports = (
                 LkYhealth.groupby(level=0, axis=1)
                 .sum()
@@ -729,18 +644,13 @@ for i in [1]:
             imports.index.names = ["region prod"]
             imports.columns.names = ["region cons"]
             imports_i[j] = imports.stack()
-
-        SLkYhealth_imp[i] = SLkYhealth_i.stack()
         imports_imp[i] = imports_i.stack()
 
         S = pd.read_csv(
             pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
         )
-        SLkYhealth_i = pd.DataFrame()
         imports_i = pd.DataFrame()
         for j in S.index:
-            SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
-
             imports = (
                 LkYhealth.groupby(level=0, axis=1)
                 .sum()
@@ -751,12 +661,10 @@ for i in [1]:
             imports.index.names = ["region prod"]
             imports.columns.names = ["region cons"]
             imports_i[j] = imports.stack()
-
-        SLkYhealth_sat[i] = SLkYhealth_i.stack()
         imports_sat[i] = imports_i.stack()
 
-    # SLkYhealth_imp.to_csv("Data/SLkYhealth/SLkYhealth_imp.txt")
-    # SLkYhealth_sat.to_csv("Data/SLkYhealth/SLkYhealth_sat.txt")
+        imports_imp.to_csv("imports_imp" + str(i) + ".csv")
+        imports_sat.to_csv("imports_sat" + str(i) + ".csv")
 
 
 ###
@@ -1023,6 +931,14 @@ def graph1():
 rolled, rolled_pop, total, share = graph1()
 
 
+def num_data_1():
+    rolled["Non-metalic minerals"].unstack().sum(axis=1)
+    rolled["Non-metalic minerals"].unstack()["China"] / rolled[
+        "Non-metalic minerals"
+    ].unstack().sum(axis=1)
+    rolled_pop.swaplevel().loc["Australia"] / rolled_pop.swaplevel().loc["Africa"]
+
+
 # attention, on a supprimé India de non-metallic pour 1995-2009
 
 
@@ -1106,7 +1022,7 @@ def graph2():
 
     axes.set_xlabel("Healthcare Access and Quality Index")
     axes.set_ylabel("Energy footprint (TJ/capita)")
-    axes.set_xlim(right=106)
+    axes.set_xlim(right=100.5)
 
     axes.legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
 
@@ -1116,6 +1032,11 @@ def graph2():
 
 
 graph2()
+#canada, australia,japan gauche, Norway droite
+
+
+def num_data2():
+    (HAQ_agg[2015] / HAQ_agg[1995]).sort_values()
 
 
 def graph3():
@@ -1128,14 +1049,14 @@ def graph3():
     y = y_pri - y_loss
 
     df = pd.concat(
-        [y[2015] for i in range(34, 101, 1)],
-        keys=[i for i in range(34, 101, 1)],
+        [y[2015] for i in range(44, 101, 1)],
+        keys=[i for i in range(44, 101, 1)],
         axis=1,
     )
 
     x = HAQ_agg[2015]
     regression = scipy.stats.linregress(x, np.log(y[2015]))
-    for ind in range(34, 101, 1):
+    for ind in range(44, 101, 1):
         for reg in HAQ_agg.index:
             if df.loc[reg].loc[ind] < ind:
                 if df[ind].loc[reg] < np.exp(regression[0] * ind + regression[1]):
@@ -1149,7 +1070,7 @@ def graph3():
         .sum()
         / 1000000
     )
-    df_agg.T.loc[[34, 40, 50, 60, 70, 80, 90, 100]].plot.bar(
+    df_agg.T.loc[[44, 50, 60, 70, 80, 90, 100]].plot.bar(
         stacked="True", width=0.5, ax=axes, color=cmap
     )
     axes.plot(
@@ -1187,6 +1108,10 @@ def graph3():
 
 graph3()
 # rajouter des pourcentages sur les barres ou alors la population à côté pour comparer
+
+
+def num_data3():
+    pop_agg.loc[["IN", "WF", "ID", "ZA", "WA"]].sum() / pop_agg.sum()
 
 
 def graph4():
