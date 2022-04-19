@@ -1009,8 +1009,9 @@ def graph2():
             label=reg,
             s=pop.loc[reg].loc[2015] / 1000,
             color=col.loc[reg].loc["color"],
-            zorder=2
-            # edgecolor='black'
+            zorder=2,
+            edgecolor="black",
+            linewidths=0.3,
         )
         axes.annotate(
             annotations_fig2.loc[reg].loc["full name"],
@@ -1032,7 +1033,6 @@ def graph2():
 
 
 graph2()
-#canada, australia,japan gauche, Norway droite
 
 
 def num_data2():
@@ -1075,16 +1075,16 @@ def graph3():
     )
     axes.plot(
         [-0.25, 7.25],
-        [df_agg[34].sum(), df_agg[34].sum()],
+        [df_agg[44].sum(), df_agg[44].sum()],
         color="gray",
         linestyle="dashed",
     )
 
     i = 1
-    for ind in [40, 50, 60, 70, 80, 90, 100]:
+    for ind in [50, 60, 70, 80, 90, 100]:
         axes.annotate(
             "",
-            xy=(i + 0.3, df_agg[34].sum()),
+            xy=(i + 0.3, df_agg[44].sum()),
             xytext=(i + 0.3, df_agg[ind].sum()),
             arrowprops=dict(arrowstyle="<->", color="black"),
         )
@@ -1092,14 +1092,14 @@ def graph3():
             x=i - 0.3,
             y=df_agg[ind].sum() + 0.55,
             s="+ "
-            + str(round(df_agg[ind].sum() / df_agg[34].sum() * 100 - 100, 2))
+            + str(round(df_agg[ind].sum() / df_agg[44].sum() * 100 - 100, 2))
             + " \%",
         )
         i += 1
 
     axes.legend(fontsize=10)
     axes.set_xlabel("World minimum Healthcare Access and Quality Index")
-    axes.set_ylabel("Energy required (EJ)")
+    axes.set_ylabel("Energy required (EJ/capita)")
 
     plt.tight_layout()
     plt.savefig("figures/fig3.pdf")
@@ -1117,7 +1117,7 @@ def num_data3():
 def graph4():
 
     fig, axes = plt.subplots(2, 2, figsize=(9, 9))
-    years = [i for i in range(2002, 2017, 1)]
+    years = [i for i in range(2002, 2016, 1)]
 
     col = pd.read_excel("continent.xlsx", index_col=[0])
     cmap = sns.color_palette("colorblind", as_cmap="True")
@@ -1162,7 +1162,7 @@ def graph4():
                     col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14
                 ),
             )
-            axes[1, 0].scatter(
+            axes[0, 1].scatter(
                 year,
                 y.loc[reg].loc[year],
                 s=pop.loc[reg].loc[year] / 6000,
@@ -1193,7 +1193,7 @@ def graph4():
 
     for reg in y.unstack().index:
         for year in years:
-            axes[0, 1].scatter(
+            axes[1, 0].scatter(
                 np.log(x.loc[reg].loc[year]),
                 y.loc[reg].loc[year],
                 s=pop.loc[reg].loc[year] / 6000,
@@ -1214,7 +1214,16 @@ def graph4():
             )
         k += 1
 
-    y_world = (
+    y_world_0 = (
+        (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
+        .unstack()
+        .drop(1995, axis=1)
+    )[years].sum() / exp.unstack().sum()
+    x_world_0 = np.log(exp.unstack().sum() / pop.sum().loc[exp.unstack().sum().index])
+    axes[0, 0].plot(x_world_0, y_world_0, color="black", zorder=2)
+    axes[0, 1].plot(y_world_0.index, y_world_0, color="black", zorder=2)
+
+    y_world_1 = (
         (
             (
                 satellite["Energy Carrier Net Total"]
@@ -1226,7 +1235,9 @@ def graph4():
         / constant_ppp.sum()
         * 1000
     )
-    axes[1, 1].plot(y_world.index, y_world, ls="dashed", color="black", zorder=2)
+    x_world_1 = np.log(constant_ppp.sum() / pop.sum().loc[constant_ppp.sum().index])
+    axes[1, 0].plot(x_world_1, y_world_1, color="black", zorder=2)
+    axes[1, 1].plot(y_world_1.index, y_world_1, color="black", zorder=2)
 
     axes[0, 0].set_ylim(top=9.5)
     axes[1, 0].set_ylim(top=9.5)
@@ -1240,8 +1251,8 @@ def graph4():
     axes[1, 0].set_ylabel("Energy intensity (MJ/USdolppp2015)")
     axes[1, 1].set_ylabel("Energy intensity (MJ/USdolppp2015)")
     axes[0, 0].set_xlabel("Health expenditures (USdol)")
-    axes[0, 1].set_xlabel("Health expenditures (USdol)")
-    axes[1, 0].set_xlabel("Year")
+    axes[1, 0].set_xlabel("Health expenditures (USdol)")
+    axes[0, 1].set_xlabel("Year")
     axes[1, 1].set_xlabel("Year")
 
     handles = [
@@ -1270,8 +1281,6 @@ def graph4():
 
 
 graph4()
-# rajouter les world mean partout
-# échanger 2 et 3
 
 
 #####################
