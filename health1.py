@@ -1428,7 +1428,6 @@ sankey_fossil()
 
 
 def pie():
-    fig, axes = plt.subplots(4, 2, figsize=(10, 15))
 
     continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
     extensions = [
@@ -1448,24 +1447,26 @@ def pie():
     df = pd.read_csv("imports_imp2013.csv", index_col=[2, 0, 1])
     df = df.rename(index=dict(continent.index))
     for j in [0, 1, 2]:
+        fig, axes = plt.subplots(1, 2, figsize=(10, 6))
+
         ext = extensions[j]
         df_ext = df.loc[ext].div(df.loc[ext].sum())
         df_ext.groupby(level="region prod").sum()["2013"].plot(
             kind="pie",
             title="Production " + names[j],
-            ax=axes[j, 0],
+            ax=axes[0],
             autopct="%1.1f%%",
             startangle=startangle[j],
         )
         df_ext.groupby(level="region cons").sum()["2013"].plot(
             kind="pie",
             title="Consumption " + names[j],
-            ax=axes[j, 1],
+            ax=axes[1],
             autopct="%1.1f%%",
             startangle=startangle[j],
         )
-        axes[j, 0].set_ylabel("")
-        axes[j, 1].set_ylabel("")
+        axes[0].set_ylabel("")
+        axes[1].set_ylabel("")
 
         print(
             df_ext.groupby(level="region prod")
@@ -1479,28 +1480,31 @@ def pie():
             .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
             .sum()
         )
+        plt.tight_layout()
+        plt.savefig("figures/pie " + names[j] + ".svg")
 
     dfi = pd.read_csv("imports_sat2013.csv", index_col=[2, 0, 1])
     df = dfi.rename(index=dict(continent.index))
     for j in [3]:
+        fig, axes = plt.subplots(1, 2, figsize=(10, 6))
         ext = extensions[j]
         df_ext = df.loc[ext].div(df.loc[ext].sum())
         df_ext.groupby(level="region prod").sum()["2013"].plot(
             kind="pie",
             title="Production " + names[j],
-            ax=axes[j, 0],
+            ax=axes[0],
             autopct="%1.1f%%",
             startangle=startangle[j],
         )
         df_ext.groupby(level="region cons").sum()["2013"].plot(
             kind="pie",
             title="Consumption " + names[j],
-            ax=axes[j, 1],
+            ax=axes[1],
             autopct="%1.1f%%",
             startangle=startangle[j],
         )
-        axes[j, 0].set_ylabel("")
-        axes[j, 1].set_ylabel("")
+        axes[0].set_ylabel("")
+        axes[1].set_ylabel("")
 
         print(
             df_ext.groupby(level="region prod")
@@ -1514,7 +1518,11 @@ def pie():
             .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
             .sum()
         )
-    plt.savefig("figures/pies.svg", bbox="tight")
+        plt.tight_layout()
+        plt.savefig("figures/pie " + names[j] + ".svg")
+
+
+# pie()
 
 
 def graph1():
