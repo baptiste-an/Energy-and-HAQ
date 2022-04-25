@@ -10,6 +10,18 @@ import country_converter as coco
 import seaborn as sns
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
+from sklearn.metrics import r2_score
+import plotly.offline as pyo
+import plotly.graph_objs as go
+import plotly.io as pio
+
+
+pio.orca.config.executable = (
+    "C:/Users/andrieba/anaconda3/pkgs/plotly-orca-1.2.1-1/orca_app/orca.exe"
+)
+pio.orca.config.save()
+pio.kaleido.scope.mathjax = None  # ne sert à rien car mathjax ne fonctionne pas
+pyo.init_notebook_mode()
 
 cc = coco.CountryConverter()
 pathexio = "C:/Users/andrieba/Documents/"
@@ -624,7 +636,7 @@ def imports_dependency():
     imports_imp = pd.DataFrame()
     imports_sat = pd.DataFrame()
 
-    for i in [2015]:
+    for i in [2013]:
         LkYhealth = pd.read_csv(
             pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".txt",
             header=[0],
@@ -976,6 +988,533 @@ comparison()
 ).plot()
 pow(1.830727 / 1.233071, 1 / 15)
 # + 2.7%/an
+
+
+def sankey():
+    i = 2016
+    df = pd.read_csv("imports_imp" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+
+    ind = (
+        df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+        .groupby(level=[0, 1])
+        .sum()
+        .unstack()
+        .index
+    )
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = (
+        df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+        .groupby(level=[0, 1])
+        .sum()
+    )
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=ind.append(ind),
+                    color="blue",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                ),
+            )
+        ]
+    )
+
+    fig.update_layout(title_text="Basic Sankey Diagram", font_size=10)
+    fig.show()
+
+    i = 2016
+    df = pd.read_csv("imports_sat" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+
+    ind = (
+        df.loc["Domestic Extraction Used - Fossil Fuel: Total"]
+        .groupby(level=[0, 1])
+        .sum()
+        .unstack()
+        .index
+    )
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = (
+        df.loc["Domestic Extraction Used - Fossil Fuel: Total"]
+        .groupby(level=[0, 1])
+        .sum()
+    )
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=ind.append(ind),
+                    color="blue",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                ),
+            )
+        ]
+    )
+
+    fig.update_layout(title_text="Basic Sankey Diagram", font_size=10)
+    fig.show()
+
+
+def sankey_non_ferous():
+    i = 2013
+    df = pd.read_csv("imports_imp" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+
+    ind = (
+        df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+        .groupby(level=[0, 1])
+        .sum()
+        .unstack()
+        .index
+    )
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = (
+        df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+        .groupby(level=[0, 1])
+        .sum()
+    )
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    label = []
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(
+                    df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+                    .groupby(level="region prod")
+                    .sum()
+                    .loc[i]
+                    .values
+                    / 1000
+                )
+            )
+            + " Mt)"
+        )
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(
+                    df.loc["Domestic Extraction Used - Non-ferous metal ores"]
+                    .groupby(level="region cons")
+                    .sum()
+                    .loc[i]
+                    .values
+                    / 1000
+                )
+            )
+            + " Mt)"
+        )
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=label,
+                    # ind.append(ind),
+                    color="lightgray",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                    color=[cmap[i] for i in sankey_metal["source"]],
+                ),
+                valueformat=".0f",
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title_text="Healthcare systems consumption of non-ferous metal ores in 2013",
+        font_size=10,
+    )
+    fig.show()
+    fig.write_image("figures/sankey non ferous.svg", engine="orca")
+
+
+sankey_non_ferous()
+
+
+def sankey_iron():
+    i = 2013
+    df = pd.read_csv("imports_imp" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+
+    ind = (
+        df.loc["Domestic Extraction Used - Iron Ore"]
+        .groupby(level=[0, 1])
+        .sum()
+        .unstack()
+        .index
+    )
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = (
+        df.loc["Domestic Extraction Used - Iron Ore"].groupby(level=[0, 1]).sum()
+    )
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    label = []
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(
+                    df.loc["Domestic Extraction Used - Iron Ore"]
+                    .groupby(level="region prod")
+                    .sum()
+                    .loc[i]
+                    .values
+                    / 1000
+                )
+            )
+            + " Mt)"
+        )
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(
+                    df.loc["Domestic Extraction Used - Iron Ore"]
+                    .groupby(level="region cons")
+                    .sum()
+                    .loc[i]
+                    .values
+                    / 1000
+                )
+            )
+            + " Mt)"
+        )
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=label,
+                    # ind.append(ind),
+                    color="lightgray",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                    color=[cmap[i] for i in sankey_metal["source"]],
+                ),
+                valueformat=".0f",
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title_text="Healthcare systems consumption of iron ore in 2013", font_size=10
+    )
+    fig.show()
+    fig.write_image("figures/sankey iron.svg", engine="orca")
+
+
+sankey_iron()
+
+
+def sankey_minerals():
+    ext = "Domestic Extraction Used - Non-metalic Minerals"
+    i = 2013
+    df = pd.read_csv("imports_imp" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+
+    ind = df.loc[ext].groupby(level=[0, 1]).sum().unstack().index
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = df.loc[ext].groupby(level=[0, 1]).sum()
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    label = []
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(df.loc[ext].groupby(level="region prod").sum().loc[i].values / 1000)
+            )
+            + " Mt)"
+        )
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(df.loc[ext].groupby(level="region cons").sum().loc[i].values / 1000)
+            )
+            + " Mt)"
+        )
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=label,
+                    # ind.append(ind),
+                    color="lightgray",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                    color=[cmap[i] for i in sankey_metal["source"]],
+                ),
+                valueformat=".0f",
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title_text="Healthcare systems consumption of non-metalic minerals in 2013",
+        font_size=10,
+    )
+    fig.show()
+    fig.write_image("figures/sankey mineras.svg", engine="orca")
+
+
+sankey_minerals()
+
+
+def sankey_fossil():
+    ext = "Domestic Extraction Used - Fossil Fuel: Total"
+    i = 2013
+    df = pd.read_csv("imports_sat" + str(i) + ".csv", index_col=[2, 0, 1])
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    df = df.rename(index=dict(continent.index))
+    cmap = sns.color_palette("colorblind", as_cmap="True")
+
+    ind = df.loc[ext].groupby(level=[0, 1]).sum().unstack().index
+    dict_source = dict(zip(ind.values, [i for i in range(0, len(ind), 1)]))
+    dict_target = dict(zip(ind.values, [i for i in range(len(ind), len(ind) * 2, 1)]))
+
+    sankey_metal = df.loc[ext].groupby(level=[0, 1]).sum()
+    sankey_metal = (
+        sankey_metal.unstack()
+        .rename(index=dict_source, columns=dict_target)
+        .stack()
+        .reset_index()
+    )
+    sankey_metal.columns = ["source", "target", "value"]
+
+    label = []
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(df.loc[ext].groupby(level="region prod").sum().loc[i].values / 1000)
+            )
+            + " Mt)"
+        )
+    for i in ind:
+        label.append(
+            i
+            + " ("
+            + str(
+                int(df.loc[ext].groupby(level="region cons").sum().loc[i].values / 1000)
+            )
+            + " Mt)"
+        )
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=label,
+                    # ind.append(ind),
+                    color="lightgray",
+                ),
+                link=dict(
+                    source=sankey_metal["source"],
+                    target=sankey_metal["target"],
+                    value=sankey_metal["value"],
+                    color=[cmap[i] for i in sankey_metal["source"]],
+                ),
+                valueformat=".0f",
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title_text="Healthcare systems consumption of fossil fuels in 2013",
+        font_size=10,
+    )
+    fig.show()
+    fig.write_image("figures/sankey fossil.svg", engine="orca")
+
+
+sankey_fossil()
+
+
+def pie():
+    fig, axes = plt.subplots(4, 2, figsize=(10, 15))
+
+    continent = pd.read_excel("continent.xlsx", index_col=[0, 1])
+    extensions = [
+        "Domestic Extraction Used - Non-metalic Minerals",
+        "Domestic Extraction Used - Iron Ore",
+        "Domestic Extraction Used - Non-ferous metal ores",
+        "Domestic Extraction Used - Fossil Fuel: Total",
+    ]
+    names = [
+        "non-metallic minerals",
+        "iron ore",
+        "non-ferous metal ores",
+        "fossil fuels",
+    ]
+    startangle = [135, 0, -45, 135]
+
+    df = pd.read_csv("imports_imp2013.csv", index_col=[2, 0, 1])
+    df = df.rename(index=dict(continent.index))
+    for j in [0, 1, 2]:
+        ext = extensions[j]
+        df_ext = df.loc[ext].div(df.loc[ext].sum())
+        df_ext.groupby(level="region prod").sum()["2013"].plot(
+            kind="pie",
+            title="Production " + names[j],
+            ax=axes[j, 0],
+            autopct="%1.1f%%",
+            startangle=startangle[j],
+        )
+        df_ext.groupby(level="region cons").sum()["2013"].plot(
+            kind="pie",
+            title="Consumption " + names[j],
+            ax=axes[j, 1],
+            autopct="%1.1f%%",
+            startangle=startangle[j],
+        )
+        axes[j, 0].set_ylabel("")
+        axes[j, 1].set_ylabel("")
+
+        print(
+            df_ext.groupby(level="region prod")
+            .sum()["2013"]
+            .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
+            .sum()
+        )
+        print(
+            df_ext.groupby(level="region cons")
+            .sum()["2013"]
+            .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
+            .sum()
+        )
+
+    dfi = pd.read_csv("imports_sat2013.csv", index_col=[2, 0, 1])
+    df = dfi.rename(index=dict(continent.index))
+    for j in [3]:
+        ext = extensions[j]
+        df_ext = df.loc[ext].div(df.loc[ext].sum())
+        df_ext.groupby(level="region prod").sum()["2013"].plot(
+            kind="pie",
+            title="Production " + names[j],
+            ax=axes[j, 0],
+            autopct="%1.1f%%",
+            startangle=startangle[j],
+        )
+        df_ext.groupby(level="region cons").sum()["2013"].plot(
+            kind="pie",
+            title="Consumption " + names[j],
+            ax=axes[j, 1],
+            autopct="%1.1f%%",
+            startangle=startangle[j],
+        )
+        axes[j, 0].set_ylabel("")
+        axes[j, 1].set_ylabel("")
+
+        print(
+            df_ext.groupby(level="region prod")
+            .sum()["2013"]
+            .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
+            .sum()
+        )
+        print(
+            df_ext.groupby(level="region cons")
+            .sum()["2013"]
+            .loc[["Africa", "Rest of Asia", "Middle East", "Latin America", "India"]]
+            .sum()
+        )
+    plt.savefig("figures/pies.svg", bbox="tight")
 
 
 def graph1():
