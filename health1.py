@@ -104,6 +104,10 @@ def dict_regions_update():
     dict_regions["The Bahamas"] = "Bahamas"
     dict_regions["The Gambia"] = "Gambia"
     dict_regions["Virgin Islands, U.S."] = "United States Virgin Islands"
+    dict_regions["Congo, DRC"] = "DR Congo"
+    dict_regions["Marshall Is."] = "Marshall Islands"
+    dict_regions["Solomon Is."] = "Solomon Islands"
+    dict_regions["Timor Leste"] = "Timor-Leste"
 
     for j in [
         "Africa Eastern and Southern",
@@ -809,6 +813,154 @@ df_arup = pd.concat(
 plt.scatter(df_arup["arup"], df_arup["calc ges"])
 
 
+def comparison():
+    df_pichler = pd.concat(
+        [
+            impacts[
+                "Carbon dioxide (CO2) IPCC categories 1 to 4 and 6 to 7 (excl land use, land use change and forestry)"
+            ]
+            .loc[pichler.index]
+            .unstack()[2014]
+            / pop[2014].loc[pichler.index],
+            pichler["CO2 2014"] / pop[2014].loc[pichler.index] * 1000,
+        ],
+        keys=["calc co2", "pichler"],
+        axis=1,
+    )
+    fig, axes = plt.subplots(1, figsize=(5, 5))
+    axes.scatter(df_pichler["calc co2"], df_pichler["pichler"])
+    regression = scipy.stats.linregress(df_pichler["pichler"], df_pichler["calc co2"])
+    axes.plot(df_pichler["calc co2"], df_pichler["calc co2"])
+    # print(str(regression[2] ** 2) + 'regression pich')
+    print(
+        str(r2_score(df_pichler["calc co2"], df_pichler["pichler"])) + "r2 score pich"
+    )
+    # print(str(r2_score(df_pichler["calc co2"], df_pichler["pichler"]))+'r2 score pich')
+    # print(str(r2_score(df_pichler["pichler"], df_pichler["pichler"] * regression[0] + regression[1]))+'r2 score pich')
+    # print(str(r2_score(df_pichler["pichler"] * regression[0] + regression[1], df_pichler["pichler"]))+'r2 score pich')
+    # print(str(r2_score(df_pichler["calc co2"], df_pichler["pichler"] * regression[0] + regression[1]))+'r2 score pich')
+    # print(str(r2_score(df_pichler["pichler"] * regression[0] + regression[1], df_pichler["calc co2"]))+'r2 score pich')
+
+    fig, axes = plt.subplots(1, figsize=(5, 5))
+    axes.scatter(df_lenzen["calc ges"], df_lenzen["lenzen"])
+    regression = scipy.stats.linregress(df_lenzen["lenzen"], df_lenzen["calc ges"])
+    axes.plot(df_lenzen["calc ges"], df_lenzen["calc ges"])
+    # print(str(regression[2] ** 2) + 'regression lenz')
+    print(str(r2_score(df_lenzen["calc ges"], df_lenzen["lenzen"])) + "r2 score lenz")
+    # print(str(r2_score(df_lenzen["calc ges"], df_lenzen["lenzen"]))+'r2 score lenz')
+
+    fig, axes = plt.subplots(1, figsize=(5, 5))
+    axes.scatter(df_arup["calc ges"], df_arup["arup"])
+    regression = scipy.stats.linregress(df_arup["arup"], df_arup["calc ges"])
+    axes.plot(df_arup["calc ges"], df_arup["calc ges"])
+    # print(str(regression[2] ** 2) + 'regression arup')
+    print(str(r2_score(df_arup["calc ges"], df_arup["arup"])) + "r2 score arup")
+    # print(str(r2_score(df_arup["calc ges"], df_arup["arup"]))+'r2 score arup')
+
+    print(
+        str(
+            impacts[
+                "Carbon dioxide (CO2) IPCC categories 1 to 4 and 6 to 7 (excl land use, land use change and forestry)"
+            ]
+            .loc["AT"]
+            .loc[2014]
+            / 1000
+            / 6.8
+        )
+        + "Weisz Austria 2014"
+    )  # Weisz 6.8 MtCO2 2014
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["JP"]
+            .loc[2015]
+            / 1000000000
+            / 72
+        )
+        + "Nansai Japan 2015"
+    )  # Nansai 72.0 MtCO2e
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["US"]
+            .loc[2013]
+            / 1000000000
+            / 655
+        )
+        + "Eckelman US 2013"
+    )  # Eckelman 655 MtCO2e
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["GB"]
+            .loc[2015]
+            / pop[2015].loc["GB"]
+            / 1000
+            / 498
+        )
+        + "Tennison GB 2015"
+    )  # Tennison  MtCO2e vs. 498 per capita exio
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["CA"]
+            .loc[2015]
+            / 1000000000
+            / 33.0
+        )
+        + "Eckelman CA 2015"
+    )  # Eckelman 33.0 MtCO2e vs. 26.4 exio
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["AU"]
+            .loc[2015]
+            / 1000000000
+            / 35.8
+        )
+        + "Malik AU 2015"
+    )  # Malik 35.8 MtCO2e vs. 29.0 exio
+
+    print(
+        str(
+            impacts[
+                "GHG emissions (GWP100) | Problem oriented approach: baseline (CML, 2001) | GWP100 (IPCC, 2007)"
+            ]
+            .loc["CN"]
+            .loc[2012]
+            / 1000000000
+            / 315
+        )
+        + "Wu CN 2012"
+    )  # Wu 315 MtCO2e vs. 472 exio
+
+    (abs(1 - df_pichler["pichler"] / df_pichler["calc co2"])).mean()
+    (abs(1 - df_lenzen["lenzen"] / df_lenzen["calc ges"])).mean()
+    (abs(1 - df_arup["arup"] / df_arup["calc ges"])).mean()
+
+    (abs(np.log(df_pichler["pichler"] / df_pichler["calc co2"]))).mean()
+    (abs(np.log(df_lenzen["lenzen"] / df_lenzen["calc ges"]))).mean()
+    (abs(np.log(df_arup["arup"] / df_arup["calc ges"]))).mean()
+
+
+comparison()
+
+
 (
     (
         (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"])
@@ -831,19 +983,24 @@ def graph1():
 
     cmap = sns.color_palette("colorblind", as_cmap="True")
 
-    df = pd.concat(
-        [
-            impacts["Domestic Extraction Used - Non-metalic Minerals"],
-            impacts[
-                [
-                    "Domestic Extraction Used - Iron Ore",
-                    "Domestic Extraction Used - Non-ferous metal ores",
-                ]
-            ].sum(axis=1),
-            satellite["Domestic Extraction Used - Fossil Fuel: Total"],
-        ],
-        keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
-        axis=1,
+    df = (
+        pd.concat(
+            [
+                impacts["Domestic Extraction Used - Non-metalic Minerals"],
+                impacts[
+                    [
+                        "Domestic Extraction Used - Iron Ore",
+                        "Domestic Extraction Used - Non-ferous metal ores",
+                    ]
+                ].sum(axis=1),
+                satellite["Domestic Extraction Used - Fossil Fuel: Total"],
+            ],
+            keys=["Non-metalic minerals", "Metal ores", "Fossil fuel"],
+            axis=1,
+        )
+        .swaplevel()
+        .drop([2016, 2017])
+        .swaplevel()
     )
     total = pd.concat(
         [
@@ -873,11 +1030,7 @@ def graph1():
     for ext in df.columns:
 
         df_agg_rolled = (
-            df_agg[ext]
-            .unstack()
-            .T.drop([2014, 2015, 2016, 2017])
-            .rolling(3, center=True)
-            .mean()
+            df_agg[ext].unstack().T.drop([2014, 2015]).rolling(3, center=True).mean()
         ) / 1000000
         df_agg_rolled.loc[[1995, 2013]] = (
             df_agg[ext].unstack().T.loc[[1995, 2013]] / 1000000
@@ -888,11 +1041,12 @@ def graph1():
         df_agg_rolled.plot.area(ax=axes[j, 0], color=cmap)
         ax2 = axes[j, 0].twinx()
         df_agg_rolled.sum(axis=1).div(total[ext].values / 1000000 / 100).plot(
-            ax=ax2, color="black", ls="dashed"
+            ax=ax2, color="black", ls="dashed", label="Share of world\nfootprint"
         )
+        ax2.legend(fontsize=7, framealpha=0)
         share[ext] = df_agg_rolled.sum(axis=1).div(total[ext].values / 1000000 / 100)
         rolled[ext] = df_agg_rolled.stack()  # for num data
-        ax2.set_ylim([0, 7])
+        ax2.set_ylim([0, 7.5])
         ax2.set_ylabel("Share of world footprint (\%)")
         axes[j, 0].set_ylabel(ext + " (Gt)")
         axes[j, 0].legend(fontsize=7, framealpha=0, ncol=2)
@@ -900,7 +1054,7 @@ def graph1():
         df_agg_pop_rolled = (
             df_agg_pop[ext]
             .unstack()
-            .T.drop([2014, 2015, 2016, 2017])
+            .T.drop([2014, 2015])
             .rolling(3, center=True)
             .mean()
         )
@@ -917,13 +1071,25 @@ def graph1():
 
         j += 1
 
+        axes[0, 0].set_ylim(top=2.8)
+        axes[1, 0].set_ylim(top=0.37)
+        axes[2, 0].set_ylim(top=0.7)
+
         axes[0, 1].set_ylim(top=1.6)
         axes[1, 1].set_ylim(top=0.48)
         # axes[2,1].set_ylim(top=0.55)
 
+        axes[0, 0].set_title("a", loc="left")
+        axes[0, 1].set_title("b", loc="left")
+        axes[1, 0].set_title("c", loc="left")
+        axes[1, 1].set_title("d", loc="left")
+        axes[2, 0].set_title("e", loc="left")
+        axes[2, 1].set_title("f", loc="left")
+
         plt.tight_layout()
         plt.savefig("figures/fig1.pdf", bbox="tight")
         plt.savefig("figures/fig1.png", bbox="tight")
+        plt.savefig("figures/fig1.svg", bbox="tight")
 
     return rolled, rolled_pop, total, share
 
@@ -965,9 +1131,7 @@ def graph2():
             )
         )
     handles.append(
-        mlines.Line2D(
-            [], [], color="black", linestyle="--", markersize=80, label="World mean"
-        )
+        mlines.Line2D([], [], color="black", markersize=80, label="Regression 2015")
     )
 
     col_line = pd.read_excel("continent.xlsx", index_col=[0])
@@ -1030,6 +1194,7 @@ def graph2():
     plt.tight_layout()
     plt.savefig("figures/fig2.pdf")
     plt.savefig("figures/fig2.png", bbox="tight")
+    plt.savefig("figures/fig2.svg", bbox="tight")
 
 
 graph2()
@@ -1099,11 +1264,12 @@ def graph3():
 
     axes.legend(fontsize=10)
     axes.set_xlabel("World minimum Healthcare Access and Quality Index")
-    axes.set_ylabel("Energy required (EJ/capita)")
+    axes.set_ylabel("Energy required (EJ)")
 
     plt.tight_layout()
     plt.savefig("figures/fig3.pdf")
     plt.savefig("figures/fig3.png", bbox="tight")
+    plt.savefig("figures/fig3.svg")
 
 
 graph3()
@@ -1150,7 +1316,11 @@ def graph4():
         .drop(1995, axis=1)
         .stack()
     ).loc[constant_ppp.unstack().swaplevel().index] / exp.swaplevel()
-    x = exp / pop.stack().loc[constant_ppp.unstack().swaplevel().index].swaplevel()
+    x = (
+        exp
+        / pop.stack().loc[constant_ppp.unstack().swaplevel().index].swaplevel()
+        * 1000
+    )
     for reg in y.unstack().index:
         for year in range(2002, 2016, 1):
             axes[0, 0].scatter(
@@ -1219,7 +1389,9 @@ def graph4():
         .unstack()
         .drop(1995, axis=1)
     )[years].sum() / exp.unstack().sum()
-    x_world_0 = np.log(exp.unstack().sum() / pop.sum().loc[exp.unstack().sum().index])
+    x_world_0 = np.log(
+        exp.unstack().sum() / pop.sum().loc[exp.unstack().sum().index] * 1000
+    )
     axes[0, 0].plot(x_world_0, y_world_0, color="black", zorder=2)
     axes[0, 1].plot(y_world_0.index, y_world_0, color="black", zorder=2)
 
@@ -1243,23 +1415,19 @@ def graph4():
     axes[1, 0].set_ylim(top=9.5)
     axes[0, 1].set_ylim(top=9.5)
     axes[1, 1].set_ylim(top=9.5)
-    axes[1, 1].set_xlim(right=2018)
+
     # axes[1, 1].set_xticks([2002, 2005, 2008, 2010, 2012, 2014, 2015])
 
     axes[0, 0].set_ylabel("Energy intensity (MJ/USdol)")  # $, essayer en svg
-    axes[0, 1].set_ylabel("Energy intensity (MJ/USdolppp2015)")
+    axes[0, 1].set_ylabel("Energy intensity (MJ/USdol)")
     axes[1, 0].set_ylabel("Energy intensity (MJ/USdolppp2015)")
     axes[1, 1].set_ylabel("Energy intensity (MJ/USdolppp2015)")
     axes[0, 0].set_xlabel("Health expenditures (USdol)")
-    axes[1, 0].set_xlabel("Health expenditures (USdol)")
+    axes[1, 0].set_xlabel("Health expenditures (USdolppp2015)")
     axes[0, 1].set_xlabel("Year")
     axes[1, 1].set_xlabel("Year")
 
-    handles = [
-        mlines.Line2D(
-            [], [], color="black", linestyle="--", markersize=80, label="World mean"
-        )
-    ]
+    handles = []
     for i in dict_color.keys():
         handles.append(
             mlines.Line2D(
@@ -1272,12 +1440,22 @@ def graph4():
                 color=dict_color[i],
             )
         )
-    axes[0, 1].legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
-    axes[1, 1].legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
+    handles.append(
+        mlines.Line2D([], [], color="black", markersize=80, label="World mean")
+    )
+
+    axes[1, 0].legend(handles=handles, fontsize=10, ncol=2, framealpha=0, loc=2)
+    axes[1, 1].legend(handles=handles, fontsize=10, ncol=2, framealpha=0, loc=2)
+
+    axes[0, 0].set_title("a", loc="left")
+    axes[0, 1].set_title("b", loc="left")
+    axes[1, 0].set_title("c", loc="left")
+    axes[1, 1].set_title("d", loc="left")
 
     plt.tight_layout()
     plt.savefig("figures/fig4.pdf")
     plt.savefig("figures/fig4.png", bbox="tight")
+    plt.savefig("figures/fig4.svg")
 
 
 graph4()
