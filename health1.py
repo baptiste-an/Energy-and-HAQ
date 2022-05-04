@@ -852,6 +852,15 @@ def comparison():
     # print(str(r2_score(df_pichler["pichler"] * regression[0] + regression[1], df_pichler["pichler"]))+'r2 score pich')
     # print(str(r2_score(df_pichler["calc co2"], df_pichler["pichler"] * regression[0] + regression[1]))+'r2 score pich')
     # print(str(r2_score(df_pichler["pichler"] * regression[0] + regression[1], df_pichler["calc co2"]))+'r2 score pich')
+    axes.set_xlabel("This study ($tCO^2/capita$)")
+    axes.set_ylabel("Pichler et al. ($tCO^2/capita$)")
+    for i in df_pichler["calc co2"].index:
+        axes.annotate(
+            i,
+            (df_pichler["calc co2"].loc[i], df_pichler["pichler"].loc[i]),
+        )
+    plt.tight_layout()
+    plt.savefig("figures/comp Pichler.svg")
 
     fig, axes = plt.subplots(1, figsize=(5, 5))
     axes.scatter(df_lenzen["calc ges"], df_lenzen["lenzen"])
@@ -860,6 +869,15 @@ def comparison():
     # print(str(regression[2] ** 2) + 'regression lenz')
     print(str(r2_score(df_lenzen["calc ges"], df_lenzen["lenzen"])) + "r2 score lenz")
     # print(str(r2_score(df_lenzen["calc ges"], df_lenzen["lenzen"]))+'r2 score lenz')
+    axes.set_xlabel("This study ($tCO^2eq/capita$)")
+    axes.set_ylabel("Lenzen et al. ($tCO^2eq/capita$)")
+    for i in df_lenzen["calc ges"].index:
+        axes.annotate(
+            i,
+            (df_lenzen["calc ges"].loc[i], df_lenzen["lenzen"].loc[i]),
+        )
+    plt.tight_layout()
+    plt.savefig("figures/comp Lenzen.svg", bbox="tight")
 
     fig, axes = plt.subplots(1, figsize=(5, 5))
     axes.scatter(df_arup["calc ges"], df_arup["arup"])
@@ -868,6 +886,15 @@ def comparison():
     # print(str(regression[2] ** 2) + 'regression arup')
     print(str(r2_score(df_arup["calc ges"], df_arup["arup"])) + "r2 score arup")
     # print(str(r2_score(df_arup["calc ges"], df_arup["arup"]))+'r2 score arup')
+    axes.set_xlabel("This study ($tCO^2eq/capita$)")
+    axes.set_ylabel("Health Care Without Harm ($tCO^2eq/capita$)")
+    for i in df_arup["calc ges"].index:
+        axes.annotate(
+            i,
+            (df_arup["calc ges"].loc[i], df_arup["arup"].loc[i]),
+        )
+    plt.tight_layout()
+    plt.savefig("figures/comp arup.svg")
 
     print(
         str(
@@ -988,6 +1015,8 @@ comparison()
 ).plot()
 pow(1.830727 / 1.233071, 1 / 15)
 # + 2.7%/an
+
+# sns.color_palette("colorblind", as_cmap="True").append('olive')
 
 
 def sankey():
@@ -1177,10 +1206,6 @@ def sankey_non_ferous():
         ]
     )
 
-    fig.update_layout(
-        title_text="Healthcare systems consumption of non-ferous metal ores in 2013",
-        font_size=10,
-    )
     fig.show()
     fig.write_image("figures/sankey non ferous.svg", engine="orca")
 
@@ -1271,9 +1296,6 @@ def sankey_iron():
         ]
     )
 
-    fig.update_layout(
-        title_text="Healthcare systems consumption of iron ore in 2013", font_size=10
-    )
     fig.show()
     fig.write_image("figures/sankey iron.svg", engine="orca")
 
@@ -1343,12 +1365,8 @@ def sankey_minerals():
         ]
     )
 
-    fig.update_layout(
-        title_text="Healthcare systems consumption of non-metalic minerals in 2013",
-        font_size=10,
-    )
     fig.show()
-    fig.write_image("figures/sankey mineras.svg", engine="orca")
+    fig.write_image("figures/sankey minerals.svg", engine="orca")
 
 
 sankey_minerals()
@@ -1416,10 +1434,6 @@ def sankey_fossil():
         ]
     )
 
-    fig.update_layout(
-        title_text="Healthcare systems consumption of fossil fuels in 2013",
-        font_size=10,
-    )
     fig.show()
     fig.write_image("figures/sankey fossil.svg", engine="orca")
 
@@ -1443,11 +1457,12 @@ def pie():
         "fossil fuels",
     ]
     startangle = [135, 0, -45, 135]
+    cmap = sns.color_palette("colorblind", as_cmap="True")
 
     df = pd.read_csv("imports_imp2013.csv", index_col=[2, 0, 1])
     df = df.rename(index=dict(continent.index))
     for j in [0, 1, 2]:
-        fig, axes = plt.subplots(1, 2, figsize=(10, 6))
+        fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 
         ext = extensions[j]
         df_ext = df.loc[ext].div(df.loc[ext].sum())
@@ -1457,6 +1472,7 @@ def pie():
             ax=axes[0],
             autopct="%1.1f%%",
             startangle=startangle[j],
+            colors=cmap,
         )
         df_ext.groupby(level="region cons").sum()["2013"].plot(
             kind="pie",
@@ -1464,6 +1480,7 @@ def pie():
             ax=axes[1],
             autopct="%1.1f%%",
             startangle=startangle[j],
+            colors=cmap,
         )
         axes[0].set_ylabel("")
         axes[1].set_ylabel("")
@@ -1486,7 +1503,7 @@ def pie():
     dfi = pd.read_csv("imports_sat2013.csv", index_col=[2, 0, 1])
     df = dfi.rename(index=dict(continent.index))
     for j in [3]:
-        fig, axes = plt.subplots(1, 2, figsize=(10, 6))
+        fig, axes = plt.subplots(1, 2, figsize=(10, 5))
         ext = extensions[j]
         df_ext = df.loc[ext].div(df.loc[ext].sum())
         df_ext.groupby(level="region prod").sum()["2013"].plot(
@@ -1495,6 +1512,7 @@ def pie():
             ax=axes[0],
             autopct="%1.1f%%",
             startangle=startangle[j],
+            colors=cmap,
         )
         df_ext.groupby(level="region cons").sum()["2013"].plot(
             kind="pie",
@@ -1502,6 +1520,7 @@ def pie():
             ax=axes[1],
             autopct="%1.1f%%",
             startangle=startangle[j],
+            colors=cmap,
         )
         axes[0].set_ylabel("")
         axes[1].set_ylabel("")
