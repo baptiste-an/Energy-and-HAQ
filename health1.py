@@ -1701,6 +1701,7 @@ def graph2():
     )
 
     col_line = pd.read_excel("continent.xlsx", index_col=[0])
+    sns.color_palette("pastel", as_cmap="True").append("olive")
     cmap = sns.color_palette("pastel", as_cmap="True")
     dict_color = dict(
         zip(
@@ -1752,7 +1753,7 @@ def graph2():
         )
 
     axes.set_xlabel("Healthcare Access and Quality Index")
-    axes.set_ylabel("Energy footprint (TJ/capita)")
+    axes.set_ylabel("Energy footprint (GJ/capita)")
     axes.set_xlim(right=100.5)
 
     axes.legend(handles=handles, fontsize=10, ncol=2, framealpha=0)
