@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2022-04-26T15:27:34.374035</dc:date>
+    <dc:date>2023-04-16T17:48:17.864023</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -32,109 +32,100 @@ z
    <g id="matplotlib.axis_1"/>
    <g id="matplotlib.axis_2"/>
    <g id="patch_2">
-    <path d="M 89.573888 96.880634 
-C 85.395674 101.058849 81.533562 105.541637 78.019437 110.291992 
-C 74.505312 115.042347 71.348869 120.04716 68.576167 125.265117 
-L 173.953434 181.260181 
-L 89.573888 96.880634 
+    <path d="M 89.664892 96.763163 
+C 85.480641 100.947414 81.612967 105.436695 78.093801 110.193941 
+C 74.574636 114.951187 71.41369 119.96327 68.637063 125.188809 
+L 174.16191 181.260181 
+L 89.664892 96.763163 
 z
 " style="fill: #0173b2"/>
    </g>
    <g id="patch_3">
-    <path d="M 68.576167 125.265117 
-C 66.449804 129.266724 64.553103 133.386205 62.895281 137.603539 
-C 61.23746 141.820873 59.821207 146.129216 58.653406 150.507632 
-L 173.953434 181.260181 
-L 68.576167 125.265117 
+    <path d="M 68.637063 125.188809 
+C 66.507722 129.196173 64.608382 133.32158 62.948273 137.544979 
+C 61.288164 141.768378 59.869981 146.082915 58.700617 150.467621 
+L 174.16191 181.260181 
+L 68.637063 125.188809 
 z
 " style="fill: #de8f05"/>
    </g>
    <g id="patch_4">
-    <path d="M 58.653406 150.507632 
-C 53.75703 168.865537 53.315103 188.130115 57.364518 206.693235 
-C 61.413932 225.256355 69.838786 242.586707 81.935805 257.237622 
-C 94.032824 271.888537 109.455771 283.440679 126.917198 290.929721 
-C 144.378624 298.418764 163.378755 301.630356 182.331532 300.296407 
-L 173.953434 181.260181 
-L 58.653406 150.507632 
+    <path d="M 58.700617 150.467621 
+C 53.798057 168.850501 53.355827 188.141149 57.410842 206.729377 
+C 61.465856 225.317605 69.902061 242.671427 82.015287 257.34232 
+C 94.128514 272.013213 109.572087 283.581303 127.056934 291.081004 
+C 144.54178 298.580704 163.567492 301.797377 182.545994 300.462526 
+L 174.16191 181.260181 
+L 58.700617 150.467621 
 z
 " style="fill: #029e73"/>
    </g>
    <g id="patch_5">
-    <path d="M 182.331532 300.296407 
-C 189.243853 299.809899 196.10068 298.722226 202.824236 297.045726 
-C 209.547793 295.369226 216.112562 293.110261 222.444079 290.294456 
-L 173.953434 181.260181 
-L 182.331532 300.296407 
+    <path d="M 182.545994 300.462526 
+C 189.4561 299.976504 196.310877 298.890538 203.032837 297.216904 
+C 209.754796 295.543269 216.318513 293.288296 222.649791 290.477475 
+L 174.16191 181.260181 
+L 182.545994 300.462526 
 z
 " style="fill: #d55e00"/>
    </g>
    <g id="patch_6">
-    <path d="M 222.444079 290.294456 
-C 224.6812 289.299544 226.887173 288.236017 229.058862 287.105386 
-C 231.230552 285.974755 233.366931 284.777555 235.464965 283.515485 
-L 173.953434 181.260181 
-L 222.444079 290.294456 
+    <path d="M 222.649791 290.477475 
+C 224.890862 289.482534 227.100778 288.418851 229.276402 287.287936 
+C 231.452025 286.157021 233.592324 284.95941 235.69426 283.696805 
+L 174.16191 181.260181 
+L 222.649791 290.477475 
 z
 " style="fill: #cc78bc"/>
    </g>
    <g id="patch_7">
-    <path d="M 235.464965 283.515485 
-C 235.519294 283.482804 235.573597 283.450079 235.627874 283.41731 
-C 235.682151 283.384542 235.736402 283.351731 235.790627 283.318876 
-L 173.953434 181.260181 
-L 235.464965 283.515485 
+    <path d="M 235.69426 283.696805 
+C 235.748689 283.66411 235.803092 283.631372 235.857469 283.59859 
+C 235.911846 283.565808 235.966196 283.532984 236.020521 283.500115 
+L 174.16191 181.260181 
+L 235.69426 283.696805 
 z
 " style="fill: #ca9161"/>
    </g>
    <g id="patch_8">
-    <path d="M 235.790627 283.318876 
-C 242.210546 279.429058 248.249138 274.942143 253.826074 269.91782 
-C 259.403011 264.893497 264.49345 259.354145 269.029677 253.373452 
-L 173.953434 181.260181 
-L 235.790627 283.318876 
+    <path d="M 236.020521 283.500115 
+C 242.452139 279.608769 248.502243 275.119198 254.090341 270.091132 
+C 259.678439 265.063066 264.779639 259.518902 269.326075 253.5324 
+L 174.16191 181.260181 
+L 236.020521 283.500115 
 z
 " style="fill: #fbafe4"/>
    </g>
    <g id="patch_9">
-    <path d="M 269.029677 253.373452 
-C 277.589539 242.087879 284.072025 229.367842 288.173089 215.809942 
-C 292.274154 202.252043 293.928663 188.071613 293.059014 173.933753 
-L 173.953434 181.260181 
-L 269.029677 253.373452 
+    <path d="M 269.326075 253.5324 
+C 277.905367 242.23565 284.404998 229.500977 288.520078 215.925745 
+C 292.635159 202.350514 294.300323 188.150361 293.43746 173.991397 
+L 174.16191 181.260181 
+L 269.326075 253.5324 
 z
 " style="fill: #949494"/>
    </g>
    <g id="patch_10">
-    <path d="M 293.059014 173.933753 
-C 292.483989 164.585581 290.810401 155.337526 288.072835 146.380701 
-C 285.335269 137.423876 281.552713 128.820407 276.803334 120.748085 
-L 173.953434 181.260181 
-L 293.059014 173.933753 
+    <path d="M 293.43746 173.991397 
+C 292.298997 155.310038 286.787387 137.154816 277.348193 120.993415 
+C 267.908998 104.832014 254.80362 91.111993 239.091508 80.942489 
+L 174.16191 181.260181 
+L 293.43746 173.991397 
 z
 " style="fill: #ece133"/>
    </g>
    <g id="patch_11">
-    <path d="M 276.803334 120.748085 
-C 272.112093 112.774576 266.509497 105.373585 260.108525 98.694352 
-C 253.707553 92.01512 246.551521 86.102848 238.784733 81.076757 
-L 173.953434 181.260181 
-L 276.803334 120.748085 
+    <path d="M 239.091508 80.942489 
+C 216.139043 66.086741 188.769043 59.548914 161.580398 62.427536 
+C 134.391754 65.306158 108.997621 77.430434 89.664891 96.763164 
+L 174.16191 181.260181 
+L 239.091508 80.942489 
 z
 " style="fill: #56b4e9"/>
    </g>
-   <g id="patch_12">
-    <path d="M 238.784733 81.076757 
-C 215.864355 66.244384 188.533734 59.717704 161.384623 62.593249 
-C 134.235511 65.468794 108.878527 77.575972 89.573837 96.880685 
-L 173.953434 181.260181 
-L 238.784733 81.076757 
-z
-" style="fill: #808000"/>
-   </g>
    <g id="text_1">
     <!-- Africa -->
-    <g transform="translate(43.74076 105.685833)scale(0.1 -0.1)">
+    <g transform="translate(43.801713 105.577977)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-41" d="M 2272 4416 
 L 1722 4416 
@@ -244,7 +235,7 @@ z
    </g>
    <g id="text_2">
     <!-- 4.7% -->
-    <g transform="translate(110.027996 141.169927)scale(0.1 -0.1)">
+    <g transform="translate(110.156005 141.111097)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-34" d="M 2253 1088 
 L 2835 1088 
@@ -292,7 +283,7 @@ z
    </g>
    <g id="text_3">
     <!-- Australia -->
-    <g transform="translate(14.844605 135.728535)scale(0.1 -0.1)">
+    <g transform="translate(14.882048 135.664119)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-75" d="M 2618 2739 
 L 2131 2739 
@@ -367,7 +358,7 @@ z
    </g>
    <g id="text_4">
     <!-- 3.6% -->
-    <g transform="translate(100.953503 157.556856)scale(0.1 -0.1)">
+    <g transform="translate(101.068688 157.52172)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-33" d="M 1005 2025 
 L 1440 2025 
@@ -419,7 +410,7 @@ z
    </g>
    <g id="text_5">
     <!-- China -->
-    <g transform="translate(48.906692 267.326026)scale(0.1 -0.1)">
+    <g transform="translate(48.973275 267.441194)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-43" d="M 3501 714 
 C 3072 427 2874 344 2355 344 
@@ -474,7 +465,7 @@ z
    </g>
    <g id="text_6">
     <!-- 30.3% -->
-    <g transform="translate(109.887149 229.337306)scale(0.1 -0.1)">
+    <g transform="translate(110.018229 229.400124)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-30" d="M 2758 2044 
 C 2758 2405 2752 3077 2490 3596 
@@ -505,7 +496,7 @@ z
    </g>
    <g id="text_7">
     <!-- Europe -->
-    <g transform="translate(205.711317 311.114941)scale(0.1 -0.1)">
+    <g transform="translate(205.919929 311.303236)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-45" d="M 1958 433 
 C 1446 433 1216 433 1101 433 
@@ -587,7 +578,7 @@ z
    </g>
    <g id="text_8">
     <!-- 5.5% -->
-    <g transform="translate(184.910876 253.222168)scale(0.1 -0.1)">
+    <g transform="translate(185.119427 253.324875)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-35" d="M 934 3752 
 L 2502 3752 
@@ -615,7 +606,7 @@ z
    </g>
    <g id="text_9">
     <!-- India -->
-    <g transform="translate(234.569405 300.180567)scale(0.1 -0.1)">
+    <g transform="translate(234.787851 300.381371)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-49" d="M 1094 4416 
 L 557 4416 
@@ -654,7 +645,7 @@ z
    </g>
    <g id="text_10">
     <!-- 2.0% -->
-    <g transform="translate(200.651652 247.257964)scale(0.1 -0.1)">
+    <g transform="translate(200.865565 247.367494)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-32" d="M 1651 1357 
 C 1830 1541 2099 1764 2285 1987 
@@ -684,7 +675,7 @@ z
    </g>
    <g id="text_11">
     <!-- Japan and Korea -->
-    <g transform="translate(241.795318 296.123683)scale(0.1 -0.1)">
+    <g transform="translate(242.027025 296.323091)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-4a" d="M 2336 4384 
 L 1811 4384 
@@ -730,7 +721,7 @@ z
    </g>
    <g id="text_12">
     <!-- 0.1% -->
-    <g transform="translate(204.593059 245.045119)scale(0.1 -0.1)">
+    <g transform="translate(204.814206 245.153886)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-31" d="M 1818 4288 
 L 1696 4288 
@@ -754,7 +745,7 @@ z
    </g>
    <g id="text_13">
     <!-- Latin America -->
-    <g transform="translate(261.813339 281.274244)scale(0.1 -0.1)">
+    <g transform="translate(262.083184 281.464887)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-4c" d="M 1670 414 
 C 1594 414 1517 414 1440 414 
@@ -806,7 +797,7 @@ z
    </g>
    <g id="text_14">
     <!-- 6.0% -->
-    <g transform="translate(215.511979 236.945424)scale(0.1 -0.1)">
+    <g transform="translate(215.753929 237.049412)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-36" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-30" transform="translate(72.867828 0)scale(0.996264)"/>
@@ -814,7 +805,7 @@ z
    </g>
    <g id="text_15">
     <!-- Middle East -->
-    <g transform="translate(299.595055 221.755579)scale(0.1 -0.1)">
+    <g transform="translate(299.955895 221.882962)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-4d" d="M 3194 2371 
 L 2886 1473 
@@ -857,7 +848,7 @@ z
    </g>
    <g id="text_16">
     <!-- 11.3% -->
-    <g transform="translate(233.62952 204.480698)scale(0.1 -0.1)">
+    <g transform="translate(233.921104 204.55018)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-31" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
@@ -866,7 +857,7 @@ z
    </g>
    <g id="text_17">
     <!-- Rest of Asia -->
-    <g transform="translate(299.484775 145.383413)scale(0.1 -0.1)">
+    <g transform="translate(287.666821 117.457398)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-52" d="M 2522 2109 
 L 2534 2115 
@@ -903,35 +894,42 @@ z
     </g>
    </g>
    <g id="text_18">
-    <!-- 7.5% -->
-    <g transform="translate(236.060035 162.823153)scale(0.1 -0.1)">
-     <use xlink:href="#CMSS17-37" transform="scale(0.996264)"/>
-     <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-35" transform="translate(72.867828 0)scale(0.996264)"/>
+    <!-- 14.9% -->
+    <g transform="translate(227.217972 147.590781)scale(0.1 -0.1)">
+     <defs>
+      <path id="CMSS17-39" d="M 435 174 
+C 614 21 845 -128 1235 -128 
+C 2010 -128 2752 721 2752 2095 
+C 2752 3932 1952 4229 1523 4229 
+C 1094 4229 819 4041 582 3741 
+C 301 3397 250 3090 250 2733 
+C 250 2307 326 2045 506 1745 
+C 749 1357 973 1275 1222 1275 
+C 1600 1275 1978 1459 2234 1776 
+C 2189 902 1798 267 1235 267 
+C 1005 267 819 339 634 516 
+L 435 174 
+z
+M 2214 2746 
+C 2221 2703 2221 2622 2221 2596 
+C 2221 2074 1914 1664 1466 1664 
+C 1171 1664 1018 1813 902 2006 
+C 762 2249 755 2485 755 2733 
+C 755 2976 755 3244 934 3511 
+C 1069 3703 1235 3840 1523 3840 
+C 2112 3840 2208 3000 2214 2746 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
+     <use xlink:href="#CMSS17-34" transform="translate(46.843624 0)scale(0.996264)"/>
+     <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
+     <use xlink:href="#CMSS17-39" transform="translate(119.711452 0)scale(0.996264)"/>
     </g>
    </g>
    <g id="text_19">
-    <!-- Russia -->
-    <g transform="translate(268.724034 92.92843)scale(0.1 -0.1)">
-     <use xlink:href="#CMSS17-52" transform="scale(0.996264)"/>
-     <use xlink:href="#CMSS17-75" transform="translate(60.416155 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-73" transform="translate(108.621098 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-73" transform="translate(144.53464 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-69" transform="translate(180.448182 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-61" transform="translate(202.628905 0)scale(0.996264)"/>
-    </g>
-   </g>
-   <g id="text_20">
-    <!-- 7.4% -->
-    <g transform="translate(219.281449 134.211344)scale(0.1 -0.1)">
-     <use xlink:href="#CMSS17-37" transform="scale(0.996264)"/>
-     <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-34" transform="translate(72.867828 0)scale(0.996264)"/>
-    </g>
-   </g>
-   <g id="text_21">
     <!-- USA and Canada -->
-    <g transform="translate(88.355049 53.217216)scale(0.1 -0.1)">
+    <g transform="translate(88.549555 53.034931)scale(0.1 -0.1)">
      <defs>
       <path id="CMSS17-55" d="M 3552 4384 
 L 3066 4384 
@@ -982,18 +980,18 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(628.305643 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_22">
+   <g id="text_20">
     <!-- 21.6% -->
-    <g transform="translate(157.55644 112.550682)scale(0.1 -0.1)">
+    <g transform="translate(157.757296 112.451254)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-32" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-31" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-36" transform="translate(119.711452 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_23">
+   <g id="text_21">
     <!-- Production fossil fuels -->
-    <g transform="translate(120.25684 26.096807)scale(0.12 -0.12)">
+    <g transform="translate(120.465315 25.889146)scale(0.12 -0.12)">
      <defs>
       <path id="CMSS17-50" d="M 2106 1856 
 C 2874 1856 3501 2453 3501 3158 
@@ -1040,112 +1038,103 @@ z
   <g id="axes_2">
    <g id="matplotlib.axis_3"/>
    <g id="matplotlib.axis_4"/>
-   <g id="patch_13">
-    <path d="M 429.183071 96.880634 
-C 427.95415 98.109555 426.752224 99.365176 425.578152 100.646599 
-C 424.40408 101.928022 423.258142 103.234942 422.141159 104.566422 
-L 513.562617 181.260181 
-L 429.183071 96.880634 
+   <g id="patch_12">
+    <path d="M 428.864599 96.763163 
+C 427.633968 97.993794 426.430368 99.251163 425.254662 100.53437 
+C 424.078955 101.817577 422.931422 103.126316 421.812884 104.45965 
+L 513.361617 181.260181 
+L 428.864599 96.763163 
 z
 " style="fill: #0173b2"/>
    </g>
-   <g id="patch_14">
-    <path d="M 422.141159 104.566422 
-C 420.872215 106.079044 419.641008 107.622927 418.448674 109.196644 
-C 417.256339 110.77036 416.103246 112.373426 414.990459 114.004361 
-L 513.562617 181.260181 
-L 422.141159 104.566422 
+   <g id="patch_13">
+    <path d="M 421.812884 104.45965 
+C 420.542096 105.97447 419.309102 107.520598 418.11504 109.096605 
+C 416.920978 110.672613 415.766216 112.278014 414.651821 113.911326 
+L 513.361617 181.260181 
+L 421.812884 104.45965 
 z
 " style="fill: #de8f05"/>
    </g>
-   <g id="patch_15">
-    <path d="M 414.990459 114.004361 
-C 403.583592 130.722609 396.615276 150.071219 394.7434 170.223451 
-C 392.871525 190.375684 396.156915 210.676727 404.28939 229.20992 
-C 412.421865 247.743113 425.137174 263.906252 441.234841 276.173344 
-C 457.332507 288.440435 476.289465 296.41288 496.315952 299.337987 
-L 513.562617 181.260181 
-L 414.990459 114.004361 
+   <g id="patch_14">
+    <path d="M 414.651821 113.911326 
+C 403.230031 130.651663 396.252306 150.025625 394.37733 170.204343 
+C 392.502355 190.383061 395.791044 210.710963 403.932951 229.269129 
+C 412.074858 247.827296 424.805467 264.012803 440.92303 276.297769 
+C 457.040592 288.582734 476.021476 296.568039 496.07392 299.499884 
+L 513.361617 181.260181 
+L 414.651821 113.911326 
 z
 " style="fill: #029e73"/>
    </g>
-   <g id="patch_16">
-    <path d="M 496.315952 299.337987 
-C 515.802131 302.184174 535.693195 300.162936 554.208549 293.455207 
-C 572.723903 286.747478 589.294072 275.559568 602.435738 260.892989 
-L 513.562617 181.260181 
-L 496.315952 299.337987 
+   <g id="patch_15">
+    <path d="M 496.07392 299.499884 
+C 515.586314 302.35277 535.504847 300.331764 554.046551 293.617771 
+C 572.588256 286.903778 589.182877 275.70329 602.344983 261.018895 
+L 513.361617 181.260181 
+L 496.07392 299.499884 
 z
 " style="fill: #d55e00"/>
    </g>
-   <g id="patch_17">
-    <path d="M 602.435738 260.892989 
-C 603.751107 259.424989 605.029901 257.924624 606.270944 256.393275 
-C 607.511987 254.861925 608.714897 253.300062 609.878568 251.709122 
-L 513.562617 181.260181 
-L 602.435738 260.892989 
+   <g id="patch_16">
+    <path d="M 602.344983 261.018895 
+C 603.662459 259.549043 604.943314 258.046774 606.186368 256.51347 
+C 607.429422 254.980166 608.634294 253.416297 609.799874 251.823304 
+L 513.361617 181.260181 
+L 602.344983 261.018895 
 z
 " style="fill: #cc78bc"/>
    </g>
-   <g id="patch_18">
-    <path d="M 609.878568 251.709122 
-C 615.299938 244.297166 619.847658 236.284122 623.43136 227.829216 
-C 627.015062 219.37431 629.61085 210.533918 631.167144 201.483708 
-L 513.562617 181.260181 
-L 609.878568 251.709122 
+   <g id="patch_17">
+    <path d="M 609.799874 251.823304 
+C 615.230364 244.401482 619.785979 236.377517 623.376184 227.910872 
+C 626.966389 219.444226 629.567242 210.591362 631.127056 201.528214 
+L 513.361617 181.260181 
+L 609.799874 251.823304 
 z
 " style="fill: #ca9161"/>
    </g>
-   <g id="patch_19">
-    <path d="M 631.167144 201.483708 
-C 631.958507 196.881747 632.47907 192.2373 632.726148 187.574334 
-C 632.973226 182.911367 632.946393 178.237915 632.645787 173.578094 
-L 513.562617 181.260181 
-L 631.167144 201.483708 
+   <g id="patch_18">
+    <path d="M 631.127056 201.528214 
+C 631.920173 196.919884 632.442111 192.268971 632.690177 187.599473 
+C 632.938243 182.929976 632.912008 178.249941 632.611609 173.583518 
+L 513.361617 181.260181 
+L 631.127056 201.528214 
 z
 " style="fill: #fbafe4"/>
    </g>
-   <g id="patch_20">
-    <path d="M 632.645787 173.578094 
-C 632.530015 171.78347 632.37369 169.991693 632.176931 168.204136 
-C 631.980172 166.416579 631.743029 164.633697 631.465685 162.856858 
-L 513.562617 181.260181 
-L 632.645787 173.578094 
+   <g id="patch_19">
+    <path d="M 632.611609 173.583518 
+C 632.495914 171.786298 632.339605 169.991923 632.142801 168.201769 
+C 631.945998 166.411614 631.70875 164.626138 631.43124 162.846707 
+L 513.361617 181.260181 
+L 632.611609 173.583518 
 z
 " style="fill: #949494"/>
    </g>
-   <g id="patch_21">
-    <path d="M 631.465685 162.856858 
-C 630.85691 158.956666 630.054984 155.089082 629.062865 151.268375 
-C 628.070747 147.447667 626.889658 143.67854 625.523955 139.974898 
-L 513.562617 181.260181 
-L 631.465685 162.856858 
+   <g id="patch_20">
+    <path d="M 631.43124 162.846707 
+C 630.687382 158.076996 629.655182 153.356738 628.340314 148.711893 
+C 627.025446 144.067047 625.430326 139.506141 623.563725 135.054257 
+L 513.361617 181.260181 
+L 631.43124 162.846707 
 z
 " style="fill: #ece133"/>
    </g>
-   <g id="patch_22">
-    <path d="M 625.523955 139.974898 
-C 625.222144 139.156419 624.911367 138.341273 624.59168 137.529609 
-C 624.271993 136.717945 623.943416 135.909811 623.606007 135.105353 
-L 513.562617 181.260181 
-L 625.523955 139.974898 
+   <g id="patch_21">
+    <path d="M 623.563725 135.054257 
+C 615.982431 116.972713 604.066253 101.031887 588.869938 88.642767 
+C 573.673623 76.253647 555.659165 67.792883 536.421096 64.009371 
+C 517.183027 60.225859 497.306216 61.234624 478.550039 66.946376 
+C 459.793862 72.658128 442.728539 82.89922 428.86459 96.763173 
+L 513.361617 181.260181 
+L 623.563725 135.054257 
 z
 " style="fill: #56b4e9"/>
    </g>
-   <g id="patch_23">
-    <path d="M 623.606007 135.105353 
-C 616.033563 117.050962 604.133043 101.13455 588.957681 88.764775 
-C 573.782319 76.395 555.793416 67.947877 536.583049 64.171004 
-C 517.372683 60.394131 497.524809 61.402318 478.796032 67.106336 
-C 460.067254 72.810355 443.026888 83.036815 429.183065 96.88064 
-L 513.562617 181.260181 
-L 623.606007 135.105353 
-z
-" style="fill: #808000"/>
-   </g>
-   <g id="text_24">
+   <g id="text_22">
     <!-- Africa -->
-    <g transform="translate(392.094428 95.075901)scale(0.1 -0.1)">
+    <g transform="translate(391.758689 94.952449)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-41" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-66" transform="translate(62.217855 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-72" transform="translate(90.844514 0)scale(0.996264)"/>
@@ -1154,17 +1143,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(186.573831 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_25">
+   <g id="text_23">
     <!-- 1.4% -->
-    <g transform="translate(454.406899 135.382692)scale(0.1 -0.1)">
+    <g transform="translate(454.132404 135.315355)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-34" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_26">
+   <g id="text_24">
     <!-- Australia -->
-    <g transform="translate(371.992418 104.48095)scale(0.1 -0.1)">
+    <g transform="translate(371.645521 104.370908)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-41" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-75" transform="translate(62.217855 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-73" transform="translate(110.422798 0)scale(0.996264)"/>
@@ -1176,17 +1165,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(301.361046 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_27">
+   <g id="text_25">
     <!-- 1.6% -->
-    <g transform="translate(450.129212 140.512718)scale(0.1 -0.1)">
+    <g transform="translate(449.848631 140.452696)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-36" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_28">
+   <g id="text_26">
     <!-- China -->
-    <g transform="translate(369.534718 236.495554)scale(0.1 -0.1)">
+    <g transform="translate(369.162735 236.560684)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-43" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-68" transform="translate(59.855772 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-69" transform="translate(108.060715 0)scale(0.996264)"/>
@@ -1194,18 +1183,18 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(178.446381 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_29">
+   <g id="text_27">
     <!-- 32.2% -->
-    <g transform="translate(439.142974 212.520685)scale(0.1 -0.1)">
+    <g transform="translate(438.84871 212.55621)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-33" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-32" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-32" transform="translate(119.711452 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_30">
+   <g id="text_28">
     <!-- Europe -->
-    <g transform="translate(558.273142 307.16537)scale(0.1 -0.1)">
+    <g transform="translate(558.115045 307.34419)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-45" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-75" transform="translate(55.892013 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-72" transform="translate(104.096956 0)scale(0.996264)"/>
@@ -1214,18 +1203,18 @@ z
      <use xlink:href="#CMSS17-65" transform="translate(233.657734 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_31">
+   <g id="text_29">
     <!-- 15.7% -->
-    <g transform="translate(529.094469 251.067857)scale(0.1 -0.1)">
+    <g transform="translate(528.91687 251.165395)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-35" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-37" transform="translate(119.711452 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_32">
+   <g id="text_30">
     <!-- India -->
-    <g transform="translate(615.541777 266.397244)scale(0.1 -0.1)">
+    <g transform="translate(615.468843 266.529459)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-49" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-6e" transform="translate(25.783926 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-64" transform="translate(73.988869 0)scale(0.996264)"/>
@@ -1233,17 +1222,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(144.374535 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_33">
+   <g id="text_31">
     <!-- 1.6% -->
-    <g transform="translate(562.822574 228.830697)scale(0.1 -0.1)">
+    <g transform="translate(562.691428 228.902814)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-36" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_34">
+   <g id="text_32">
     <!-- Japan and Korea -->
-    <g transform="translate(634.418235 234.976779)scale(0.1 -0.1)">
+    <g transform="translate(634.377641 235.066601)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-4a" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-61" transform="translate(44.121076 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-70" transform="translate(89.042996 0)scale(0.996264)"/>
@@ -1259,17 +1248,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(616.774893 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_35">
+   <g id="text_33">
     <!-- 7.3% -->
-    <g transform="translate(573.118824 211.692262)scale(0.1 -0.1)">
+    <g transform="translate(573.005317 211.741255)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-37" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-33" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_36">
+   <g id="text_34">
     <!-- Latin America -->
-    <g transform="translate(644.642502 190.696409)scale(0.1 -0.1)">
+    <g transform="translate(644.623033 190.724063)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-4c" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-61" transform="translate(50.687105 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-74" transform="translate(95.609026 0)scale(0.996264)"/>
@@ -1284,17 +1273,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(504.870621 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_37">
+   <g id="text_35">
     <!-- 3.7% -->
-    <g transform="translate(578.695696 187.539333)scale(0.1 -0.1)">
+    <g transform="translate(578.593713 187.554416)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-33" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-37" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_38">
+   <g id="text_36">
     <!-- Middle East -->
-    <g transform="translate(644.038362 169.389192)scale(0.1 -0.1)">
+    <g transform="translate(644.02092 169.386588)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-4d" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-69" transform="translate(81.67603 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-64" transform="translate(103.856753 0)scale(0.996264)"/>
@@ -1307,17 +1296,17 @@ z
      <use xlink:href="#CMSS17-74" transform="translate(432.042773 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_39">
+   <g id="text_37">
     <!-- 1.4% -->
-    <g transform="translate(578.366166 175.917214)scale(0.1 -0.1)">
+    <g transform="translate(578.265288 175.915794)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-31" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-34" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_40">
+   <g id="text_38">
     <!-- Rest of Asia -->
-    <g transform="translate(640.61289 150.759854)scale(0.1 -0.1)">
+    <g transform="translate(639.838184 147.947724)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-52" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-65" transform="translate(60.416155 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-73" transform="translate(102.054977 0)scale(0.996264)"/>
@@ -1330,36 +1319,17 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(430.040713 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_41">
-    <!-- 3.2% -->
-    <g transform="translate(576.497726 165.755757)scale(0.1 -0.1)">
+   <g id="text_39">
+    <!-- 3.9% -->
+    <g transform="translate(575.983796 164.221868)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-33" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-32" transform="translate(72.867828 0)scale(0.996264)"/>
+     <use xlink:href="#CMSS17-39" transform="translate(72.867828 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_42">
-    <!-- Russia -->
-    <g transform="translate(635.694586 135.647212)scale(0.1 -0.1)">
-     <use xlink:href="#CMSS17-52" transform="scale(0.996264)"/>
-     <use xlink:href="#CMSS17-75" transform="translate(60.416155 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-73" transform="translate(108.621098 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-73" transform="translate(144.53464 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-69" transform="translate(180.448182 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-61" transform="translate(202.628905 0)scale(0.996264)"/>
-    </g>
-   </g>
-   <g id="text_43">
-    <!-- 0.7% -->
-    <g transform="translate(573.815016 157.512498)scale(0.1 -0.1)">
-     <use xlink:href="#CMSS17-30" transform="scale(0.996264)"/>
-     <use xlink:href="#CMSS17-2e" transform="translate(46.843624 0)scale(0.996264)"/>
-     <use xlink:href="#CMSS17-37" transform="translate(72.867828 0)scale(0.996264)"/>
-    </g>
-   </g>
-   <g id="text_44">
+   <g id="text_40">
     <!-- USA and Canada -->
-    <g transform="translate(538.885093 54.952746)scale(0.1 -0.1)">
+    <g transform="translate(538.727044 54.77495)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-55" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-53" transform="translate(64.13974 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-41" transform="translate(116.188256 0)scale(0.996264)"/>
@@ -1374,18 +1344,18 @@ z
      <use xlink:href="#CMSS17-61" transform="translate(628.305643 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_45">
+   <g id="text_41">
     <!-- 31.2% -->
-    <g transform="translate(518.519169 113.497335)scale(0.1 -0.1)">
+    <g transform="translate(518.341597 113.400355)scale(0.1 -0.1)">
      <use xlink:href="#CMSS17-33" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-31" transform="translate(46.843624 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-2e" transform="translate(93.687247 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-32" transform="translate(119.711452 0)scale(0.996264)"/>
     </g>
    </g>
-   <g id="text_46">
+   <g id="text_42">
     <!-- Consumption fossil fuels -->
-    <g transform="translate(454.727022 26.096807)scale(0.12 -0.12)">
+    <g transform="translate(454.526021 25.889146)scale(0.12 -0.12)">
      <use xlink:href="#CMSS17-43" transform="scale(0.996264)"/>
      <use xlink:href="#CMSS17-6f" transform="translate(59.855772 0)scale(0.996264)"/>
      <use xlink:href="#CMSS17-6e" transform="translate(106.699395 0)scale(0.996264)"/>
