@@ -69,14 +69,14 @@ total_sat = pd.read_csv("results/total_sat.csv", index_col=0).loc[satellite_ext]
 total_imp = pd.read_csv("results/total_imp.csv", index_col=0).loc[impacts_ext]
 
 
-###
+### data for panel data analysis
 y_pri = satellite_cap["Energy Carrier Net Total"].unstack()
 y_loss = satellite_cap["Energy Carrier Net LOSS"].unstack()
 years = [1995, 2000, 2005, 2010, 2015]
 x = HAQ_agg[years]
 panel = pd.concat([x.stack(), (y_pri - y_loss).stack().loc[x.stack().index]], keys=["x", "y"], axis=1)
 panel = panel.reset_index()
-# panel.to_excel('panel.xlsx')
+panel.to_excel("results/data_for_panel.xlsx")
 
 
 ### Graphs in the paper
@@ -299,7 +299,7 @@ def fig4():
     SLkYhealth_i = LkYhealth.mul(S, axis=0).groupby(level="sector").sum()
 
     cmap = sns.color_palette("colorblind", as_cmap="True")
-    conc = pd.read_excel("concordance_products2.xlsx", index_col=[0, 1])
+    conc = pd.read_excel("Data/concordance_products2.xlsx", index_col=[0, 1])
     regions = (
         (constant_ppp / pop)[2015].loc[HAQ_agg[2015].sort_values(ascending=False).head(10).index].sort_values().index
     )
@@ -400,12 +400,13 @@ def fig5():
     for reg in y.unstack().index:
         for year in range(2002, 2016, 1):
             axes[0, 0].scatter(
-                np.log(x.loc[reg].loc[year]),
+                x.loc[reg].loc[year],
                 y.loc[reg].loc[year],
                 s=pop.loc[reg].loc[year] / 6000,
                 # color=str(1 - (year - 2002) / 14),
                 color=adjust_lightness(col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14),
             )
+            axes[0, 0].set_xscale("log")
             axes[0, 1].scatter(
                 year,
                 y.loc[reg].loc[year],
@@ -430,12 +431,13 @@ def fig5():
     for reg in y.unstack().index:
         for year in years:
             axes[1, 0].scatter(
-                np.log(x.loc[reg].loc[year]),
+                x.loc[reg].loc[year],
                 y.loc[reg].loc[year],
                 s=pop.loc[reg].loc[year] / 6000,
                 # color=str(1 - (year - 2002) / 14),
                 color=adjust_lightness(col.loc[reg].loc["color"], 1.5 - (year - 2002) / 14),
             )
+            axes[1, 0].set_xscale("log")
             axes[1, 1].scatter(
                 year,
                 y.loc[reg].loc[year],
@@ -449,7 +451,7 @@ def fig5():
     y_world_0 = (
         (satellite["Energy Carrier Net Total"] - satellite["Energy Carrier Net LOSS"]).unstack().drop(1995, axis=1)
     )[years].sum() / exp.unstack().sum()
-    x_world_0 = np.log(exp.unstack().sum() / pop.sum().loc[exp.unstack().sum().index] * 1000)
+    x_world_0 = exp.unstack().sum() / pop.sum().loc[exp.unstack().sum().index] * 1000
     axes[0, 0].plot(x_world_0, y_world_0, color="black", zorder=2)
     axes[0, 1].plot(y_world_0.index, y_world_0, color="black", zorder=2)
 
@@ -460,7 +462,7 @@ def fig5():
         / constant_ppp.sum()
         * 1000
     )
-    x_world_1 = np.log(constant_ppp.sum() / pop.sum().loc[constant_ppp.sum().index])
+    x_world_1 = constant_ppp.sum() / pop.sum().loc[constant_ppp.sum().index]
     axes[1, 0].plot(x_world_1, y_world_1, color="black", zorder=2)
     axes[1, 1].plot(y_world_1.index, y_world_1, color="black", zorder=2)
 
@@ -469,8 +471,8 @@ def fig5():
     axes[0, 1].set_ylim(top=16)
     axes[1, 1].set_ylim(top=16)
 
-    axes[1, 0].set_xlim([2.8, 9.5])
-    axes[0, 0].set_xlim([2.8, 9.5])
+    axes[1, 0].set_xlim(np.exp([2.8, 9.5]))
+    axes[0, 0].set_xlim(np.exp([2.8, 9.5]))
 
     # axes[1, 1].set_xticks([2002, 2005, 2008, 2010, 2012, 2014, 2015])
 
@@ -1373,7 +1375,7 @@ def fig4_other():
         SLkY[i] = LkYhealth.mul(S_sat.loc[i], axis=0).groupby(level="sector").sum().unstack()
         SLY[i] = LYhealth.mul(S_sat.loc[i], axis=0).groupby(level="sector").sum().unstack()
 
-    conc = pd.read_excel("concordance_products2.xlsx", index_col=[0, 1])
+    conc = pd.read_excel("Data/concordance_products2.xlsx", index_col=[0, 1])
     df = agg(SLkY.groupby(level=[0, 2]).sum().unstack(level=0), conc, axis=0)
     df = pd.concat(
         [

@@ -8,7 +8,7 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 
 
-dataset = pd.read_excel("panel.xlsx", usecols=["region", "level_1", "x", "y"], index_col=[0, 1])
+dataset = pd.read_excel("results/data_for_panel.xlsx", usecols=["region", "level_1", "x", "y"], index_col=[0, 1])
 dataset["y"] = np.log(dataset["y"])
 dataset.index.names = ["state", "year"]
 x_lin = np.linspace(dataset["x"].min(), dataset["x"].max(), 100)
@@ -18,7 +18,7 @@ dataset["year"] = pd.Categorical(years)
 
 
 ### plot ok
-df = pd.read_excel("panel.xlsx", usecols=["region", "level_1", "x", "y"], index_col=[0, 1])
+df = pd.read_excel("results/data_for_panel.xlsx", usecols=["region", "level_1", "x", "y"], index_col=[0, 1])
 plt.plot(df["x"], df["y"])
 ###
 
