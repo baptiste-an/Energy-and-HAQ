@@ -22,9 +22,9 @@ population = rename_region(
     level="Country Name",
 ).drop("Z - Aggregated categories")[[str(i) for i in range(1995, 2020, 1)]]
 population.columns = [int(i) for i in population.columns]
-population.loc["Taiwan"] = pd.read_excel("Data/pop Taiwan.xls", header=0, index_col=0)[
-    "TW"
-][[i for i in range(1995, 2016, 1)]]
+population.loc["Taiwan"] = pd.read_excel("Data/pop Taiwan.xls", header=0, index_col=0)["TW"][
+    [i for i in range(1995, 2016, 1)]
+]
 pop = (
     population.rename(
         dict(
@@ -62,15 +62,7 @@ HAQ = (
 HAQ_agg = HAQ.drop("Anguilla") * population.loc[HAQ.drop("Anguilla").index]
 HAQ_agg["region"] = cc.convert(names=HAQ_agg.index, to="EXIO3")
 HAQ_agg = (
-    (
-        HAQ_agg.reset_index()
-        .set_index("region")
-        .drop("location_name", axis=1)
-        .groupby(level="region")
-        .sum()
-    )
-    / pop
-    / 1000
+    (HAQ_agg.reset_index().set_index("region").drop("location_name", axis=1).groupby(level="region").sum()) / pop / 1000
 )
 
 ### Health expenditures
@@ -94,16 +86,12 @@ def Y_health_NHA_euros():
     # we will compare these expenditures with NHA in order to use the 2000 share for years 19995-1999
 
     expendituresNHA = (
-        pd.read_excel("Data/NHA_health_expenses_2018.xlsx", header=[0], index_col=[0])
-        .groupby(level="region")
-        .sum()
+        pd.read_excel("Data/NHA_health_expenses_2018.xlsx", header=[0], index_col=[0]).groupby(level="region").sum()
         / 1000
     ).drop(
         [2016, 2017, 2018], axis=1
     )  # WHO expenditures in NHA format in kUS$
-    expendituresOECD_95_99 = pd.read_excel(
-        "Data/OECD_health_expenses.xlsx", header=[0], index_col=[0]
-    )
+    expendituresOECD_95_99 = pd.read_excel("Data/OECD_health_expenses.xlsx", header=[0], index_col=[0])
     # OECD expenditures for missing years in WHO in US$
     expendituresNHA = pd.concat([expendituresOECD_95_99, expendituresNHA], axis=1)
     # expenditures in NHA format for WHO and OECD data
@@ -117,28 +105,18 @@ def Y_health_NHA_euros():
     expendituresNHAeuros49["TW"] = (shareTW).values * expendituresNHAeuros.T["CN"]
     expendituresNHAeuros49 = expendituresNHAeuros49.T
 
-    shareExioOverNHA = (
-        (Yhealth / expendituresNHAeuros49)
-        .interpolate(method="linear", axis=1)
-        .T.bfill()
-        .T
-    )
+    shareExioOverNHA = (Yhealth / expendituresNHAeuros49).interpolate(method="linear", axis=1).T.bfill().T
     # We consider that for the period 1995-2000 the ratio of expenditures in the NHA format and of the exiobase sector (85)
     # stays constant for the countries not in the OECD database
 
     expendituresNHAeuros49extrapolated = Yhealth / shareExioOverNHA
     # the total health expenditures in the NHA format extrapolated for years 1995-1999
 
-    health_shares_OECD = (
-        pd.read_excel("Data/Health_Shares_OECD.xlsx", index_col=[0, 1], header=[0, 1])
-        / 100
-    ).drop([2016, 2017, 2018], axis=1)
+    health_shares_OECD = (pd.read_excel("Data/Health_Shares_OECD.xlsx", index_col=[0, 1], header=[0, 1]) / 100).drop(
+        [2016, 2017, 2018], axis=1
+    )
     health_shares_OECD = pd.DataFrame(
-        health_shares_OECD.stack()
-        .T.interpolate(method="linear", axis=0)
-        .bfill()
-        .stack(level=0)
-        .stack(level=0),
+        health_shares_OECD.stack().T.interpolate(method="linear", axis=0).bfill().stack(level=0).stack(level=0),
         columns=expendituresNHAeuros49.index,
     )
 
@@ -148,15 +126,11 @@ def Y_health_NHA_euros():
         health_shares_OECD.unstack(level=0) * expendituresNHAeuros49extrapolated.stack()
     ).stack()
     expenditures_with_appropriate_NaNValues = (
-        (
-            health_shares_OECD.unstack(level=0)
-            * expendituresNHAeuros49extrapolated.stack()
-        )
+        (health_shares_OECD.unstack(level=0) * expendituresNHAeuros49extrapolated.stack())
         / health_shares_OECD.unstack(level=0)
     ).stack()
     mean_shares_OECD = (
-        shares_multiplied_by_expenditures.sum(axis=1)
-        / expenditures_with_appropriate_NaNValues.sum(axis=1)
+        shares_multiplied_by_expenditures.sum(axis=1) / expenditures_with_appropriate_NaNValues.sum(axis=1)
     ).reorder_levels([2, 0, 1])
     for i in health_shares_OECD.index:
         for j in health_shares_OECD.columns:
@@ -165,20 +139,14 @@ def Y_health_NHA_euros():
     health_shares_OECD[
         "WM"
     ] = mean_shares_OECD  # only Israel with atypical "Retailers and other providers of medical goods"
-    health_shares_OECD = (
-        health_shares_OECD.unstack(level=0).groupby(level="sector").sum()
-    )
-    health_shares_OECD.loc["Health and social work services (85)"] = (
-        1 - health_shares_OECD.sum()
-    )
+    health_shares_OECD = health_shares_OECD.unstack(level=0).groupby(level="sector").sum()
+    health_shares_OECD.loc["Health and social work services (85)"] = 1 - health_shares_OECD.sum()
 
     i = 2015
     pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
     sectors = feather.read_feather(pathIOT + "Y.feather").loc["FR"].index
 
-    Y_health_NHA_euros = health_shares_OECD.T.mul(
-        expendituresNHAeuros49extrapolated.stack(), axis=0
-    )
+    Y_health_NHA_euros = health_shares_OECD.T.mul(expendituresNHAeuros49extrapolated.stack(), axis=0)
     Y_health_NHA_euros = pd.DataFrame(Y_health_NHA_euros, columns=sectors).swaplevel()
 
     return Y_health_NHA_euros
@@ -189,36 +157,26 @@ Y_health_NHA_euros = Y_health_NHA_euros()
 
 def ppp_health():
     ppp_all_regions = (
-        pd.read_excel(
-            "Data/NHA indicators - per capita exp ppp.xlsx", index_col=[0], header=[0]
-        )[1:]
+        pd.read_excel("Data/NHA indicators - per capita exp ppp.xlsx", index_col=[0], header=[0])[1:]
         .drop(["Indicators", "Unnamed: 2"], axis=1)
         .stack()
         .replace(dict({":": np.nan}))
         .astype("float")
     )
     pop_all_regions = (
-        pd.read_excel(
-            "Data/NHA indicators - population.xlsx", index_col=[0], header=[0]
-        )[1:]
+        pd.read_excel("Data/NHA indicators - population.xlsx", index_col=[0], header=[0])[1:]
         .drop(["Indicators", "Unnamed: 2"], axis=1)
         .stack()
         .replace(dict({":": np.nan}))
         .astype("float")
     )
-    current_ppp = (
-        (ppp_all_regions * pop_all_regions)
-        .unstack()
-        .drop(["2016", "2017", "2018"], axis=1)
-    )
+    current_ppp = (ppp_all_regions * pop_all_regions).unstack().drop(["2016", "2017", "2018"], axis=1)
     current_ppp["region"] = cc.convert(names=current_ppp.index, to="EXIO3")
     current_ppp = current_ppp.reset_index()
     current_ppp = current_ppp.set_index("region").groupby(level="region").sum()
     current_ppp.columns = [int(i) for i in current_ppp.columns]
 
-    CPI_US = pd.read_excel("Data/CPI US eurostat.xlsx", index_col=0, header=0).drop(
-        [2016, 2017], axis=1
-    )
+    CPI_US = pd.read_excel("Data/CPI US eurostat.xlsx", index_col=0, header=0).drop([2016, 2017], axis=1)
     CPI_US = CPI_US / CPI_US.loc["US"][2015]
     constant_ppp = current_ppp.drop([2000, 2001], axis=1).div(CPI_US.loc["US"], axis=1)
 
@@ -244,11 +202,7 @@ def L_and_Lk():
     """
     for i in range(1995, 2016, 1):
         pathIOT = "Data/EXIO3/IOT_" + str(i) + "_pxp/"
-        Y = (
-            feather.read_feather(pathIOT + "Y.feather")
-            .groupby(level="region", axis=1)
-            .sum()
-        )
+        Y = feather.read_feather(pathIOT + "Y.feather").groupby(level="region", axis=1).sum()
         Z = feather.read_feather(pathIOT + "Z.feather").fillna(0)
         Kbar = feather.read_feather("Data/Kbar/Kbar_" + str(i) + ".feather").fillna(0)
 
@@ -269,11 +223,7 @@ def LkYhealth():
         os.mkdir("Data/LkYhealth")
     for i in range(1995, 2016, 1):
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
-        Y = (
-            feather.read_feather(pathIOT + "Y.feather")
-            .groupby(level="region", axis=1)
-            .sum()
-        )
+        Y = feather.read_feather(pathIOT + "Y.feather").groupby(level="region", axis=1).sum()
 
         Lk = feather.read_feather(pathIOT + "Lk.feather")
         Lk.columns.names = ["region", "sector"]
@@ -315,11 +265,7 @@ def LYhealth():
         os.mkdir("Data/LYhealth")
     for i in range(2015, 2016, 1):
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
-        Y = (
-            feather.read_feather(pathIOT + "Y.feather")
-            .groupby(level="region", axis=1)
-            .sum()
-        )
+        Y = feather.read_feather(pathIOT + "Y.feather").groupby(level="region", axis=1).sum()
 
         L = feather.read_feather(pathIOT + "L.feather")
         L.columns.names = ["region", "sector"]
@@ -356,29 +302,20 @@ def LYhealth():
         )
 
 
-# LYhealth()
-
-
 def SLkYhealth():
     SLkYhealth_imp = pd.DataFrame()
     SLkYhealth_sat = pd.DataFrame()
     for i in range(1995, 2016, 1):
-        LkYhealth = feather.read_feather(
-            pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".feather"
-        )
+        LkYhealth = feather.read_feather(pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".feather")
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
 
-        S = pd.read_csv(
-            pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
-        )
+        S = pd.read_csv(pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0])
         SLkYhealth_i = pd.DataFrame()
         for j in S.index:
             SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
         SLkYhealth_imp[i] = SLkYhealth_i.stack()
 
-        S = pd.read_csv(
-            pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
-        )
+        S = pd.read_csv(pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0])
         SLkYhealth_i = pd.DataFrame()
         for j in S.index:
             SLkYhealth_i[j] = LkYhealth.mul(S.loc[j], axis=0).sum()
@@ -396,40 +333,22 @@ def imports_dependency():
     imports_sat = pd.DataFrame()
 
     for i in [2013]:
-        LkYhealth = feather.read_feather(
-            pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".feather"
-        )
+        LkYhealth = feather.read_feather(pathexio + "Data/LkYhealth/LkYhealth" + str(i) + ".feather")
         pathIOT = pathexio + "Data/EXIO3/IOT_" + str(i) + "_pxp/"
 
-        S = pd.read_csv(
-            pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
-        )
+        S = pd.read_csv(pathIOT + "impacts/S.txt", delimiter="\t", header=[0, 1], index_col=[0])
         imports_i = pd.DataFrame()
         for j in S.index:
-            imports = (
-                LkYhealth.groupby(level=0, axis=1)
-                .sum()
-                .mul(S.loc[j], axis=0)
-                .groupby(level="region")
-                .sum()
-            )
+            imports = LkYhealth.groupby(level=0, axis=1).sum().mul(S.loc[j], axis=0).groupby(level="region").sum()
             imports.index.names = ["region prod"]
             imports.columns.names = ["region cons"]
             imports_i[j] = imports.stack()
         imports_imp[i] = imports_i.stack()
 
-        S = pd.read_csv(
-            pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0]
-        )
+        S = pd.read_csv(pathIOT + "satellite/S.txt", delimiter="\t", header=[0, 1], index_col=[0])
         imports_i = pd.DataFrame()
         for j in S.index:
-            imports = (
-                LkYhealth.groupby(level=0, axis=1)
-                .sum()
-                .mul(S.loc[j], axis=0)
-                .groupby(level="region")
-                .sum()
-            )
+            imports = LkYhealth.groupby(level=0, axis=1).sum().mul(S.loc[j], axis=0).groupby(level="region").sum()
             imports.index.names = ["region prod"]
             imports.columns.names = ["region cons"]
             imports_i[j] = imports.stack()
@@ -446,35 +365,21 @@ def export_results_with_units():
     SLkYhealth_imp.columns = SLkYhealth_imp.columns.astype(int)
     SLkYhealth_sat.columns = SLkYhealth_sat.columns.astype(int)
 
-    impacts_ext_excel = (
-        SLkYhealth_imp.unstack(level="region").groupby(level="extension").sum()
-    )
-    impacts_ext_excel["unit"] = pd.read_excel(
-        "Data/unit impacts.xlsx", header=0, index_col=0
-    )["unit"]
+    impacts_ext_excel = SLkYhealth_imp.unstack(level="region").groupby(level="extension").sum()
+    impacts_ext_excel["unit"] = pd.read_excel("Data/unit impacts.xlsx", header=0, index_col=0)["unit"]
     impacts_ext_excel = impacts_ext_excel.reset_index().set_index(["unit", "extension"])
     impacts_ext_excel = impacts_ext_excel.swaplevel()
     names = pd.read_excel("Data/region names.xlsx", index_col=None)
     dict_names = dict(zip(names["region"], names["full name"]))
-    impacts_ext_excel.rename(columns=dict_names).to_excel(
-        "results/impacts_ext_all.xlsx"
-    )
+    impacts_ext_excel.rename(columns=dict_names).to_excel("results/impacts_ext_all.xlsx")
 
-    satellite_ext_excel = (
-        SLkYhealth_sat.unstack(level="region").groupby(level="extension").sum()
-    )
-    satellite_ext_excel["unit"] = pd.read_excel(
-        "Data/unit satellite.xlsx", header=0, index_col=0
-    )["unit"]
-    satellite_ext_excel = satellite_ext_excel.reset_index().set_index(
-        ["unit", "extension"]
-    )
+    satellite_ext_excel = SLkYhealth_sat.unstack(level="region").groupby(level="extension").sum()
+    satellite_ext_excel["unit"] = pd.read_excel("Data/unit satellite.xlsx", header=0, index_col=0)["unit"]
+    satellite_ext_excel = satellite_ext_excel.reset_index().set_index(["unit", "extension"])
     satellite_ext_excel = satellite_ext_excel.swaplevel()
     names = pd.read_excel("Data/region names.xlsx", index_col=None)
     dict_names = dict(zip(names["region"], names["full name"]))
-    satellite_ext_excel.rename(columns=dict_names).to_excel(
-        "results/satellite_ext_all.xlsx"
-    )
+    satellite_ext_excel.rename(columns=dict_names).to_excel("results/satellite_ext_all.xlsx")
 
 
 def world_total():

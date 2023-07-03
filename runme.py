@@ -1,5 +1,6 @@
-from health3 import *
+from specific_functions import *
 from general_functions import *
+from graphs import *
 import zipfile
 import scipy
 import scipy.io
@@ -37,10 +38,13 @@ import scipy.io
 #         "Data/Kbar/Kbar_" + str(year) + ".feather",
 #     )
 
-# run following functions from ///:
-L_and_Lk()
-LkYhealth()
-SLkYhealth()
-imports_dependency()
-export_results_with_units()
+# # run following functions from specific_functions.py:
+# L_and_Lk()
+# LkYhealth()
+# SLkYhealth()
+# imports_dependency()
+# export_results_with_units()
 world_total()
+
+# from graphs run:
+figs()

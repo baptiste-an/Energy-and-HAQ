@@ -19,8 +19,8 @@ It will:
 
 * download EXIOBASE data and save it in Data/EXIO3
 * download Kbar data and save it in Data/Kbar, convert files to .feather
-* run functions from XXX.py to calculate the footprints
-* run functions from XXX.py to 
+* run functions from specific_functions.py to calculate the footprints
+* run functions from graphs.py to create the graphs
 
 
 ## Citation
